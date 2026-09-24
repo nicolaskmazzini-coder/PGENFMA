@@ -78,8 +78,8 @@
   }
 
   async function carregar(data) {
-    statusLista.textContent = 'Carregando...';
-    lista.innerHTML = '';
+    statusLista.textContent = '';
+    lista.innerHTML = esqueleto(3);
     const r = data ? await buscarAgendamentosPorData(data) : await listarAgendamentos();
     if (!r.sucesso) {
       statusLista.textContent = '';

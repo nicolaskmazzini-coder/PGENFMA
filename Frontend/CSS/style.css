@@ -509,6 +509,108 @@ a { color: var(--brand); }
 .toast-erro { background: var(--danger); }
 .toast-info { background: var(--brand-dark); }
 
+/* ---------- Animações e carregamento ---------- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pulseIco {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+@keyframes shimmer {
+  to { transform: translateX(100%); }
+}
+
+/* esqueletos de carregamento (estrutura, independe de movimento) */
+li.sk { display: block; }
+.sk-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.sk-linha {
+  height: 13px;
+  border-radius: 7px;
+  background: #edf0f4;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.sk-linha:last-child { margin-bottom: 0; }
+.sk-linha::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent);
+}
+.sk-linha.larga { width: 100%; }
+.sk-linha.media { width: 65%; }
+.sk-linha.curta { width: 38%; }
+.sk-full { grid-column: 1 / -1; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* entrada da página */
+  header { animation: fadeDown .4s ease backwards; }
+  main > section { animation: fadeUp .45s ease backwards; }
+  main > section:nth-of-type(2) { animation-delay: .08s; }
+  main > section:nth-of-type(3) { animation-delay: .16s; }
+  main > section:nth-of-type(4) { animation-delay: .24s; }
+  main > section:nth-of-type(5) { animation-delay: .32s; }
+  main > a { animation: fadeUp .45s ease backwards .2s; }
+
+  /* hero da home */
+  .hero .logo-hero { animation: popIn .5s ease backwards .1s; }
+  .hero h1 { animation: fadeIn .5s ease backwards .18s; }
+  .hero p { animation: fadeIn .5s ease backwards .26s; }
+  .hero nav { animation: fadeIn .5s ease backwards .34s; }
+
+  /* itens de lista e cards surgem ao serem inseridos, com escalonamento */
+  li,
+  .servico-card,
+  .slot-pill,
+  .cal-chip,
+  .sk-card { animation: fadeUp .35s ease backwards; }
+  li:nth-child(2), .servico-card:nth-child(2), .slot-pill:nth-child(2), .sk-card:nth-child(2) { animation-delay: 45ms; }
+  li:nth-child(3), .servico-card:nth-child(3), .slot-pill:nth-child(3), .sk-card:nth-child(3) { animation-delay: 90ms; }
+  li:nth-child(4), .servico-card:nth-child(4), .slot-pill:nth-child(4), .sk-card:nth-child(4) { animation-delay: 135ms; }
+  li:nth-child(5), .servico-card:nth-child(5), .slot-pill:nth-child(5), .sk-card:nth-child(5) { animation-delay: 180ms; }
+  li:nth-child(6), .servico-card:nth-child(6), .slot-pill:nth-child(6), .sk-card:nth-child(6) { animation-delay: 225ms; }
+  li:nth-child(7), .servico-card:nth-child(7), .slot-pill:nth-child(7), .sk-card:nth-child(7) { animation-delay: 270ms; }
+  li:nth-child(8), .servico-card:nth-child(8), .slot-pill:nth-child(8), .sk-card:nth-child(8) { animation-delay: 315ms; }
+  li:nth-child(9), .servico-card:nth-child(9), .slot-pill:nth-child(9), .sk-card:nth-child(9) { animation-delay: 360ms; }
+  li:nth-child(10), .servico-card:nth-child(10), .slot-pill:nth-child(10), .sk-card:nth-child(10) { animation-delay: 405ms; }
+
+  /* esqueletos: brilho passando */
+  .sk-linha::after { animation: shimmer 1.25s ease infinite; }
+
+  /* micro-polimento */
+  li:hover { transform: translateY(-2px); }
+  .servico-card { transition: border-color .15s, background .15s, box-shadow .15s, transform .15s ease; }
+  .servico-card:hover { transform: translateY(-2px); }
+  .slot-pill:hover { transform: translateY(-1px); }
+  .vazio { animation: popIn .35s ease backwards; }
+  .conf-ico {
+    animation: popIn .55s ease backwards,
+               pulseIco 2.8s ease-in-out 1.2s infinite;
+  }
+}
+
 /* ---------- Responsivo ---------- */
 @media (max-width: 640px) {
   header { padding: 10px 12px; gap: 6px; }

@@ -147,7 +147,8 @@
   }
 
   async function carregar() {
-    statusLista.textContent = 'Carregando...';
+    statusLista.textContent = '';
+    lista.innerHTML = esqueleto(3);
     const filtro = campoDataFiltro.value ? { data: campoDataFiltro.value } : {};
     const r = await listarTarefas(filtro);
     if (!r.sucesso) {

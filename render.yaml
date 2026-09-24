@@ -6,9 +6,8 @@ services:
     runtime: node
     plan: free
     region: frankfurt
-    rootDir: Backend
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: npm install --prefix Backend
+    startCommand: npm start --prefix Backend
     healthCheckPath: /api/status
     autoDeployTrigger: commit
     envVars:

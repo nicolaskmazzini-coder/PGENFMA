@@ -179,9 +179,11 @@
   }
 
   async function carregar() {
+    grade.innerHTML = esqueletoCard('sk-full');
     const [r, rt] = await Promise.all([listarAgendamentos(), listarTarefas()]);
     if (!r.sucesso) {
       statusCal.textContent = 'Erro: ' + r.erro + ' (backend rodando?)';
+      grade.innerHTML = '';
       return;
     }
     porData = {};

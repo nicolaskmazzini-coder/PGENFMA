@@ -175,6 +175,8 @@
   async function carregar() {
     const status = document.getElementById('status_perfil');
     const lista = document.getElementById('lista_perfil');
+    status.textContent = '';
+    lista.innerHTML = esqueleto(2);
     const nome = (localStorage.getItem('nome_cliente') || '').toLowerCase();
     const r = await listarAgendamentos();
     if (!r.sucesso) {
