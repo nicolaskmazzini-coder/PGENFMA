@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PGENFMA - Agenda do prestador</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+</head>
+<body>
+
+  <header>
+    <a class="brand" href="index.html"><img class="logo-header" src="../img/logo.svg" alt=""> PGENFMA</a>
+    <h1>Sua agenda</h1>
+    <a href="gerenciar-servicos.html">Meus serviços</a>
+    <nav class="topnav">
+      <a href="calendario.html">Calendário</a>
+      <a href="tarefas.html">Tarefas</a>
+      <a href="busca.html">Buscar</a>
+      <a href="perfil.html"><span class="avatar-mini" data-avatar>P</span> Perfil</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section>
+      <h2>Filtrar por data</h2>
+      <label for="filtro_data">Data</label>
+      <input type="date" id="filtro_data">
+      <button type="button" id="btn_filtrar">Buscar</button>
+      <button type="button" id="btn_ver_todos">Ver todos</button>
+    </section>
+
+    <section>
+      <h2 id="titulo_lista">Agendamentos</h2>
+      <p id="status_lista">Carregando...</p>
+      <ul id="lista_agendamentos"></ul>
+    </section>
+
+  </main>
+
+<script src="../js/toast.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/api.js"></script>
+<script>
+  const campoData = document.getElementById('filtro_data');
+  const statusLista = document.getElementById('status_lista');
+  const lista = document.getElementById('lista_agendamentos');
+  const titulo = document.getElementById('titulo_lista');
+  campoData.value = new Date().toISOString().split('T')[0];
+
+  function renderizar(agendamentos) {
+    lista.innerHTML = '';
+    if (!agendamentos.length) {
+      statusLista.textContent = '';
+      lista.innerHTML = '<div class="vazio"><span class="vazio-ico">📭</span>Nenhum agendamento encontrado.</div>';
+      return;
+    }
+    statusLista.textContent = agendamentos.length + ' agendamento(s).';
+    agendamentos.forEach((a) => {
+      const li = document.createElement('li');
+      li.innerHTML = '<div><p>' + a.nome_cliente + ' - ' + a.servico + '</p>' +
+        '<p class="t-meta">' + a.data.split('-').reverse().join('/') + ' às ' + a.horario + '</p></div>' +
+        '<span class="badge ' + a.status + '">' + a.status + '</span>';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mini perigo';
+      btn.textContent = 'Cancelar';
+      btn.onclick = async () => {
+        if (!confirm('Cancelar o agendamento #' + a.id + '?')) return;
+        const r = await deletarAgendamento(a.id);
+        if (r.sucesso) { toast('Agendamento cancelado.', 'info'); carregar(campoData.value || null); }
+        else toast('Erro: ' + r.erro, 'erro');
+      };
+      li.appendChild(btn);
+      lista.appendChild(li);
+    });
+  }
+
+  async function carregar(data) {
+    statusLista.textContent = 'Carregando...';
+    lista.innerHTML = '';
+    const r = data ? await buscarAgendamentosPorData(data) : await listarAgendamentos();
+    if (!r.sucesso) {
+      statusLista.textContent = '';
+      lista.innerHTML = '<div class="vazio">Erro: ' + r.erro + ' — o backend está rodando?</div>';
+      return;
+    }
+    titulo.textContent = data ? 'Agendamentos de ' + data.split('-').reverse().join('/') : 'Todos os agendamentos';
+    renderizar(r.dados);
+  }
+
+  document.getElementById('btn_filtrar').onclick = () => carregar(campoData.value || null);
+  document.getElementById('btn_ver_todos').onclick = () => carregar(null);
+  carregar(campoData.value);
+</script>
+
+</body>
+</html>

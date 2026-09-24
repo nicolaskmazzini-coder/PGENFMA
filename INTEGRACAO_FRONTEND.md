@@ -16,7 +16,7 @@ Este documento é para ajudar o Gustavo na integração da interface web com a A
 
 ##  COMO INICIAR O SERVIDOR
 
-No PowerShell, na pasta do projeto:
+No CMD, na pasta do projeto:
 
 ```bash
 node server.js
@@ -149,7 +149,7 @@ Servidor rodando em http://localhost:3000
 **Resposta (Status 200):**
 ```json
 {
-  "mensagem": "📋 Agendamentos para 2024-04-20",
+  "mensagem": "Agendamentos para 2024-04-20",
   "total": 1,
   "agendamentos": [
     {

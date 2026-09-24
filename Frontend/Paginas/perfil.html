@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PGENFMA - Meu perfil</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+</head>
+<body>
+
+  <header>
+    <a class="brand" href="index.html"><img class="logo-header" src="../img/logo.svg" alt=""> PGENFMA</a>
+    <h1>Meu perfil</h1>
+    <nav class="topnav">
+      <a href="calendario.html">Calendário</a>
+      <a href="tarefas.html">Tarefas</a>
+      <a href="busca.html">Buscar</a>
+      <a href="perfil.html"><span class="avatar-mini" data-avatar>P</span> Perfil</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section>
+      <div class="perfil-topo">
+        <div class="avatar-perfil" id="avatar_grande">P</div>
+        <div>
+          <h2 id="perfil_nome">Meu perfil</h2>
+          <p id="perfil_email">—</p>
+          <div class="foto-acoes">
+            <label for="txt_foto" style="margin:0">
+              <span class="mini" style="display:inline-block;background:var(--brand);color:#fff;border-radius:20px;padding:7px 18px;font-weight:500;cursor:pointer">Trocar foto</span>
+            </label>
+            <input type="file" id="txt_foto" accept="image/*" hidden>
+            <button type="button" id="btn_remover_foto" class="secundario mini">Remover foto</button>
+          </div>
+          <p id="foto_aviso" style="font-size:.82rem;margin-top:6px">A foto fica salva neste navegador (máx. ~160px).</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Dados</h2>
+      <form id="form_perfil" action="#" method="post">
+        <label for="txt_nome_perfil">Nome</label>
+        <input type="text" id="txt_nome_perfil" name="nome" placeholder="Seu nome">
+
+        <label for="txt_email_perfil">E-mail</label>
+        <input type="email" id="txt_email_perfil" name="email" placeholder="voce@email.com">
+
+        <button type="submit" id="btn_salvar_perfil">Salvar alterações</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Próximos agendamentos</h2>
+      <p id="status_perfil">Carregando...</p>
+      <ul id="lista_perfil"></ul>
+    </section>
+
+    <a href="index.html">
+      <button type="button" id="btn_sair_conta" class="perigo">Sair da conta</button>
+    </a>
+
+  </main>
+
+<script src="../js/toast.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/api.js"></script>
+<script>
+  // ---------- Avatar / foto ----------
+  const avatarGrande = document.getElementById('avatar_grande');
+  const nomeInput = document.getElementById('txt_nome_perfil');
+  const emailInput = document.getElementById('txt_email_perfil');
+
+  function iniciais(nome) {
+    const partes = (nome || '').trim().split(/\s+/).filter(Boolean);
+    if (!partes.length) return 'P';
+    return partes.slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+  }
+
+  function pintarAvatar() {
+    const foto = localStorage.getItem('pgenfma_foto') || '';
+    const nome = nomeInput.value || localStorage.getItem('nome_cliente') || '';
+    if (foto) {
+      avatarGrande.style.backgroundImage = 'url(' + foto + ')';
+      avatarGrande.textContent = '';
+    } else {
+      avatarGrande.style.backgroundImage = '';
+      avatarGrande.textContent = iniciais(nome);
+    }
+    document.getElementById('perfil_nome').textContent = nome || 'Meu perfil';
+    document.getElementById('perfil_email').textContent = emailInput.value || '—';
+  }
+
+  // Carrega dados salvos
+  nomeInput.value = localStorage.getItem('nome_cliente') || '';
+  emailInput.value = localStorage.getItem('email_cliente') || '';
+  pintarAvatar();
+
+  // Redimensiona e salva a foto escolhida
+  document.getElementById('txt_foto').addEventListener('change', (e) => {
+    const arquivo = e.target.files && e.target.files[0];
+    if (!arquivo) return;
+    if (!arquivo.type.startsWith('image/')) {
+      toast('Escolha um arquivo de imagem.', 'erro');
+      return;
+    }
+    const leitor = new FileReader();
+    leitor.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 160;
+        let { width, height } = img;
+        const escala = Math.min(1, MAX / Math.max(width, height));
+        width = Math.round(width * escala);
+        height = Math.round(height * escala);
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const base64 = canvas.toDataURL('image/jpeg', 0.82);
+        try {
+          localStorage.setItem('pgenfma_foto', base64);
+          pintarAvatar();
+          document.querySelectorAll('[data-avatar]').forEach((el) => {
+            el.style.backgroundImage = 'url(' + base64 + ')';
+            el.textContent = '';
+          });
+          toast('Foto atualizada!', 'sucesso');
+        } catch (err) {
+          toast('Foto grande demais para salvar no navegador.', 'erro');
+        }
+      };
+      img.src = leitor.result;
+    };
+    leitor.readAsDataURL(arquivo);
+    e.target.value = '';
+  });
+
+  document.getElementById('btn_remover_foto').onclick = () => {
+    localStorage.removeItem('pgenfma_foto');
+    pintarAvatar();
+    document.querySelectorAll('[data-avatar]').forEach((el) => {
+      el.style.backgroundImage = '';
+      el.textContent = iniciais(nomeInput.value || localStorage.getItem('nome_cliente'));
+    });
+    toast('Foto removida.', 'info');
+  };
+
+  // ---------- Dados ----------
+  document.getElementById('form_perfil').addEventListener('submit', (e) => {
+    e.preventDefault();
+    localStorage.setItem('nome_cliente', nomeInput.value.trim());
+    localStorage.setItem('email_cliente', emailInput.value.trim());
+    pintarAvatar();
+    document.querySelectorAll('[data-avatar]').forEach((el) => {
+      el.textContent = iniciais(nomeInput.value);
+      const foto = localStorage.getItem('pgenfma_foto');
+      if (foto) { el.style.backgroundImage = 'url(' + foto + ')'; el.textContent = ''; }
+    });
+    toast('Perfil salvo neste navegador.', 'sucesso');
+    carregar();
+  });
+
+  document.getElementById('btn_sair_conta').onclick = () => {
+    localStorage.removeItem('pgenfma_sessao');
+    localStorage.removeItem('nome_cliente');
+    localStorage.removeItem('telefone');
+    toast('Sessão encerrada.', 'info');
+  };
+
+  // ---------- Agendamentos ----------
+  async function carregar() {
+    const status = document.getElementById('status_perfil');
+    const lista = document.getElementById('lista_perfil');
+    const nome = (localStorage.getItem('nome_cliente') || '').toLowerCase();
+    const r = await listarAgendamentos();
+    if (!r.sucesso) {
+      lista.innerHTML = '<div class="vazio">Erro: ' + r.erro + ' — o backend está rodando?</div>';
+      status.textContent = '';
+      return;
+    }
+    const meus = nome ? r.dados.filter((a) => a.nome_cliente.toLowerCase() === nome) : r.dados;
+    if (!meus.length) {
+      status.textContent = '';
+      lista.innerHTML = '<div class="vazio"><span class="vazio-ico">📅</span>' +
+        (nome ? 'Nenhum agendamento seu por aqui. Que tal marcar um?' : 'Salve seu nome acima para filtrar seus agendamentos.') +
+        '</div>';
+      return;
+    }
+    status.textContent = '';
+    lista.innerHTML = '';
+    meus.forEach((a) => {
+      const li = document.createElement('li');
+      li.innerHTML = '<div><p>' + a.servico + '</p>' +
+        '<p class="t-meta">' + a.data.split('-').reverse().join('/') + ' às ' + a.horario + '</p></div>' +
+        '<span class="badge ' + a.status + '">' + a.status + '</span>';
+      const link = document.createElement('a');
+      link.href = 'cancelar-reagendar.html?id=' + a.id;
+      link.innerHTML = '<button type="button" class="secundario mini">Cancelar ou reagendar</button>';
+      li.appendChild(link);
+      lista.appendChild(li);
+    });
+  }
+  carregar();
+</script>
+
+</body>
+</html>
