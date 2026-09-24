@@ -17,6 +17,7 @@
       <a href="calendario.html">Calendário</a>
       <a href="tarefas.html">Tarefas</a>
       <a href="busca.html">Buscar</a>
+      <a href="sobre-nos.html">Sobre</a>
       <a href="perfil.html"><span class="avatar-mini" data-avatar>P</span> Perfil</a>
     </nav>
   </header>
@@ -47,10 +48,10 @@
 
 <script src="../js/toast.js"></script>
 <script src="../js/ui.js"></script>
+<script src="../js/api.js"></script>
 <script>
-  // Cadastro local (o backend do TCC não tem autenticação):
-  // valida, salva a conta neste navegador e entra direto.
-  document.getElementById('form_cadastro_cliente').addEventListener('submit', (e) => {
+  // Cadastro real: cria a conta no backend e entra (cookie HttpOnly)
+  document.getElementById('form_cadastro_cliente').addEventListener('submit', async (e) => {
     e.preventDefault();
     const erro = document.getElementById('erro_cadastro');
     const nome = document.getElementById('txt_nome_cadastro_cliente').value.trim();
@@ -70,12 +71,19 @@
       return;
     }
 
-    localStorage.setItem('pgenfma_cliente', JSON.stringify({ nome, email, telefone, senha }));
-    localStorage.setItem('pgenfma_sessao', JSON.stringify({ tipo: 'cliente', email }));
-    localStorage.setItem('nome_cliente', nome);
-    localStorage.setItem('telefone', telefone);
-    localStorage.setItem('email_cliente', email);
-    window.location.href = 'busca.html';
+    const btn = document.getElementById('btn_criar_conta_cliente');
+    btn.disabled = true;
+    const r = await cadastrarConta({ nome, email, senha, telefone, tipo: 'cliente' });
+    btn.disabled = false;
+
+    if (!r.sucesso) {
+      erro.hidden = false;
+      erro.textContent = r.erro;
+      return;
+    }
+    salvarSessaoLocal(r.usuario);
+    toast('Conta criada! Bem-vindo(a), ' + r.usuario.nome + '.', 'sucesso');
+    setTimeout(() => { window.location.href = 'busca.html'; }, 400);
   });
 </script>
 

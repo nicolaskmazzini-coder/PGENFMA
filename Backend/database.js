@@ -38,6 +38,30 @@ const tabelaTarefas = `
     )
 `;
 
+const tabelaUsuarios = `
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        senha_hash TEXT,
+        telefone TEXT,
+        tipo TEXT NOT NULL DEFAULT 'cliente',
+        provider TEXT NOT NULL DEFAULT 'local',
+        provider_id TEXT,
+        foto TEXT,
+        criado_em TEXT DEFAULT (datetime('now'))
+    )
+`;
+
+const tabelaSessoes = `
+    CREATE TABLE IF NOT EXISTS sessoes (
+        token TEXT PRIMARY KEY,
+        usuario_id INTEGER NOT NULL,
+        criado_em TEXT DEFAULT (datetime('now')),
+        expira_em TEXT NOT NULL,
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE)
+`;
+
 db.serialize(() => {
     db.run(tabelas, (err) => {
         if (err) console.error(' Erro ao criar tabela:', err.message);
@@ -46,6 +70,18 @@ db.serialize(() => {
     db.run(tabelaTarefas, (err) => {
         if (err) console.error(' Erro ao criar tabela:', err.message);
         else console.log(' Tabela "tarefas" pronta!');
+    });
+    db.run(tabelaUsuarios, (err) => {
+        if (err) console.error(' Erro ao criar tabela:', err.message);
+        else console.log(' Tabela "usuarios" pronta!');
+    });
+    db.run(tabelaSessoes, (err) => {
+        if (err) console.error(' Erro ao criar tabela:', err.message);
+        else {
+            console.log(' Tabela "sessoes" pronta!');
+            // Limpa sessões expiradas
+            db.run("DELETE FROM sessoes WHERE expira_em < datetime('now')");
+        }
     });
 });
 

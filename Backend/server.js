@@ -1,4 +1,5 @@
 // Importa as bibliotecas
+require('dotenv').config(); // variáveis do Backend/.env (local) — no Render vêm do dashboard
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -8,6 +9,9 @@ const db = require('./database'); // Importa o banco de dados
 // Cria o aplicativo Express
 const app = express();
 const PORT = process.env.PORT || 3000; // Porta onde o servidor vai rodar
+
+// Confia no proxy do Render (para req.secure / cookies secure)
+app.set('trust proxy', 1);
 
 // Libera CORS para o frontend (Live Server, file://, outras portas)
 app.use(cors());
@@ -509,6 +513,10 @@ app.delete('/tarefas/:id', (req, res) => {
     });
 });
 
+
+// Autenticação (cadastro/login/sessão/OAuth) — precisa vir antes das
+// rotas amigáveis e do 404 de /api
+app.use('/api/auth', require('./auth'));
 
 // URLs amigáveis sem .html (ex: /calendario -> calendario.html)
 // Fica DEPOIS das rotas da API para não conflitar com elas

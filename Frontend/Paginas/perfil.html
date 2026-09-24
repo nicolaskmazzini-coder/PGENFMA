@@ -16,6 +16,7 @@
       <a href="calendario.html">Calendário</a>
       <a href="tarefas.html">Tarefas</a>
       <a href="busca.html">Buscar</a>
+      <a href="sobre-nos.html">Sobre</a>
       <a href="perfil.html"><span class="avatar-mini" data-avatar>P</span> Perfil</a>
     </nav>
   </header>
@@ -164,12 +165,25 @@
     carregar();
   });
 
-  document.getElementById('btn_sair_conta').onclick = () => {
+  document.getElementById('btn_sair_conta').onclick = async () => {
+    await sairConta();
     localStorage.removeItem('pgenfma_sessao');
     localStorage.removeItem('nome_cliente');
+    localStorage.removeItem('email_cliente');
     localStorage.removeItem('telefone');
     toast('Sessão encerrada.', 'info');
+    pintarAvatar();
   };
+
+  // Se não houver dados locais, completa pela sessão do servidor
+  usuarioAtual().then((r) => {
+    if (!r.sucesso || !r.usuario) return;
+    if (nomeInput.value && emailInput.value) return;
+    nomeInput.value = nomeInput.value || r.usuario.nome || '';
+    emailInput.value = emailInput.value || r.usuario.email || '';
+    pintarAvatar();
+    carregar();
+  });
 
   // ---------- Agendamentos ----------
   async function carregar() {

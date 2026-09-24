@@ -17,6 +17,7 @@
       <a href="calendario.html">Calendário</a>
       <a href="tarefas.html">Tarefas</a>
       <a href="busca.html">Buscar</a>
+      <a href="sobre-nos.html">Sobre</a>
       <a href="perfil.html"><span class="avatar-mini" data-avatar>P</span> Perfil</a>
     </nav>
   </header>
@@ -33,38 +34,45 @@
       <button type="submit" id="btn_entrar_cliente">Entrar</button>
     </form>
 
+    <div class="social-login">
+      <p class="social-titulo">ou entre com</p>
+      <div id="google_btn"></div>
+      <button type="button" id="ms_btn" class="social-btn">
+        <span class="icone-ms"><i></i><i></i><i></i><i></i></span> Entrar com Microsoft
+      </button>
+    </div>
+
     <a href="cadastro-cliente.html">Ainda não tenho conta</a>
   </main>
 
 <script src="../js/toast.js"></script>
 <script src="../js/ui.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/social.js"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
 <script>
-  // Login local: confere e-mail e senha com a conta salva no cadastro.
-  document.getElementById('form_login_cliente').addEventListener('submit', (e) => {
+  // Login real via API do backend (sessão por cookie HttpOnly)
+  document.getElementById('form_login_cliente').addEventListener('submit', async (e) => {
     e.preventDefault();
     const erro = document.getElementById('erro_login');
     const email = document.getElementById('txt_email_login_cliente').value.trim().toLowerCase();
     const senha = document.getElementById('txt_senha_login_cliente').value;
 
-    let conta = null;
-    try { conta = JSON.parse(localStorage.getItem('pgenfma_cliente')); } catch (err) {}
+    const btn = document.getElementById('btn_entrar_cliente');
+    btn.disabled = true;
+    const r = await entrarConta(email, senha);
+    btn.disabled = false;
 
-    if (!conta) {
+    if (!r.sucesso) {
       erro.hidden = false;
-      erro.textContent = 'Nenhuma conta encontrada neste navegador. Crie sua conta primeiro.';
+      erro.textContent = r.erro;
       return;
     }
-    if (conta.email !== email || conta.senha !== senha) {
-      erro.hidden = false;
-      erro.textContent = 'E-mail ou senha incorretos. Confira e tente de novo.';
-      return;
-    }
-
-    localStorage.setItem('pgenfma_sessao', JSON.stringify({ tipo: 'cliente', email }));
-    localStorage.setItem('nome_cliente', conta.nome);
-    localStorage.setItem('telefone', conta.telefone || '');
+    salvarSessaoLocal(r.usuario);
     window.location.href = 'busca.html';
   });
+
+  iniciarLoginSocial({ destino: 'busca.html' });
 </script>
 
 </body>

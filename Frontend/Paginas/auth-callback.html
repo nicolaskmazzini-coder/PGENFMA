@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PGENFMA - Concluindo login...</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <img class="logo-hero" src="../img/logo.svg" alt="PGENFMA">
+      <h1>Concluindo login...</h1>
+      <p id="msg_callback">Aguarde um instante. Se esta janela não fechar sozinha, pode fechá-la.</p>
+    </section>
+  </main>
+
+<script>
+  // Retorno do fluxo Microsoft (id_token no fragmento da URL).
+  // Devolve o token para a janela que abriu este popup e se fecha.
+  (function () {
+    const params = new URLSearchParams(location.hash.slice(1));
+    const destinoOpener = window.opener;
+
+    const responder = (dados) => {
+      if (destinoOpener && !destinoOpener.closed) {
+        destinoOpener.postMessage(dados, location.origin);
+        setTimeout(() => window.close(), 150);
+      } else {
+        document.getElementById('msg_callback').textContent =
+          'Esta janela foi aberta diretamente. Feche-a e tente o login de novo pela página.';
+      }
+    };
+
+    if (params.get('error')) {
+      responder({
+        tipo: 'ms_erro',
+        erro: params.get('error_description') || 'Login com Microsoft cancelado.'
+      });
+      return;
+    }
+    const token = params.get('id_token');
+    if (token) responder({ tipo: 'ms_id_token', token });
+    else responder({ tipo: 'ms_erro', erro: 'Microsoft não devolveu o token.' });
+  })();
+</script>
+</body>
+</html>

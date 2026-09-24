@@ -25,6 +25,49 @@
       el.textContent = iniciais.toUpperCase();
     }
   });
+
+  // Complementa nome/foto pela sessão do servidor (quando logado e
+  // o localStorage está vazio). Roda após o carregamento, quando o
+  // api.js (com API_URL) já está disponível.
+  window.addEventListener('load', async () => {
+    if (typeof API_URL === 'undefined') return;
+    try {
+      const r = await fetch(API_URL + '/api/auth/eu', { credentials: 'same-origin' });
+      if (!r.ok) return;
+      const d = await r.json();
+      if (!d.sucesso || !d.usuario) return;
+
+      let mudou = false;
+      if (!localStorage.getItem('nome_cliente') && d.usuario.nome) {
+        localStorage.setItem('nome_cliente', d.usuario.nome);
+        mudou = true;
+      }
+      if (!localStorage.getItem('email_cliente') && d.usuario.email) {
+        localStorage.setItem('email_cliente', d.usuario.email);
+        mudou = true;
+      }
+      if (d.usuario.foto && !localStorage.getItem('pgenfma_foto')) {
+        localStorage.setItem('pgenfma_foto', d.usuario.foto);
+        mudou = true;
+      }
+      if (!mudou) return;
+
+      const novaFoto = localStorage.getItem('pgenfma_foto') || '';
+      const novoNome = localStorage.getItem('nome_cliente') || '';
+      const ini = novoNome
+        ? novoNome.trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join('').toUpperCase()
+        : 'P';
+      document.querySelectorAll('[data-avatar]').forEach((el) => {
+        if (novaFoto) {
+          el.style.backgroundImage = 'url(' + novaFoto + ')';
+          el.textContent = '';
+        } else {
+          el.style.backgroundImage = '';
+          el.textContent = ini;
+        }
+      });
+    } catch (e) { /* offline ou sem backend: ignora */ }
+  });
 })();
 
 // ==========================================

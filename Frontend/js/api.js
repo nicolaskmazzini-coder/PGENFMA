@@ -241,3 +241,54 @@ if (resultado.sucesso) {
     console.log("Erro:", resultado.erro);
 }
 */
+// ==========================================
+// AUTENTICAÇÃO (/api/auth/*)
+// ==========================================
+
+async function chamarAuth(rota, opcoes = {}) {
+    try {
+        const response = await fetch(`${API_URL}/api/auth/${rota}`, {
+            method: opcoes.metodo || 'GET',
+            headers: opcoes.dados ? { 'Content-Type': 'application/json' } : undefined,
+            body: opcoes.dados ? JSON.stringify(opcoes.dados) : undefined,
+            credentials: 'same-origin'
+        });
+        const result = await response.json().catch(() => ({}));
+        if (response.ok) return Object.assign({ sucesso: true }, result);
+        return { sucesso: false, erro: result.erro || 'Falha na autenticação.' };
+    } catch (error) {
+        return { sucesso: false, erro: 'Sem conexão com o servidor.' };
+    }
+}
+
+function cadastrarConta(dados) {
+    return chamarAuth('cadastro', { metodo: 'POST', dados });
+}
+
+function entrarConta(email, senha) {
+    return chamarAuth('login', { metodo: 'POST', dados: { email, senha } });
+}
+
+function entrarSocial(provider, credential, nonce) {
+    return chamarAuth('oauth', { metodo: 'POST', dados: { provider, credential, nonce } });
+}
+
+function sairConta() {
+    return chamarAuth('logout', { metodo: 'POST' });
+}
+
+function usuarioAtual() {
+    return chamarAuth('eu');
+}
+
+function configAuth() {
+    return chamarAuth('config');
+}
+
+// Mantém as chaves de localStorage que o resto do sistema já usa
+function salvarSessaoLocal(usuario) {
+    localStorage.setItem('pgenfma_sessao', JSON.stringify({ tipo: usuario.tipo || 'cliente', email: usuario.email }));
+    localStorage.setItem('nome_cliente', usuario.nome || '');
+    localStorage.setItem('email_cliente', usuario.email || '');
+    if (usuario.telefone) localStorage.setItem('telefone', usuario.telefone);
+}

@@ -17,6 +17,7 @@
       <a href="calendario.html">Calendário</a>
       <a href="tarefas.html">Tarefas</a>
       <a href="busca.html">Buscar</a>
+      <a href="sobre-nos.html">Sobre</a>
       <a href="perfil.html"><span class="avatar-mini" data-avatar>P</span> Perfil</a>
     </nav>
   </header>
@@ -33,37 +34,45 @@
       <button type="submit" id="btn_entrar_empresa">Entrar</button>
     </form>
 
+    <div class="social-login">
+      <p class="social-titulo">ou entre com</p>
+      <div id="google_btn"></div>
+      <button type="button" id="ms_btn" class="social-btn">
+        <span class="icone-ms"><i></i><i></i><i></i><i></i></span> Entrar com Microsoft
+      </button>
+    </div>
+
     <a href="cadastro-empresa.html">Cadastrar meu negócio</a>
   </main>
 
 <script src="../js/toast.js"></script>
 <script src="../js/ui.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/social.js"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
 <script>
-  // Login local do prestador: aceita o e-mail ou o nome do negócio + senha do cadastro.
-  document.getElementById('form_login_empresa').addEventListener('submit', (e) => {
+  // Login real do prestador via API (aceita e-mail ou nome do negócio)
+  document.getElementById('form_login_empresa').addEventListener('submit', async (e) => {
     e.preventDefault();
     const erro = document.getElementById('erro_login');
     const identificador = document.getElementById('txt_identificador_login_empresa').value.trim().toLowerCase();
     const senha = document.getElementById('txt_senha_login_empresa').value;
 
-    let conta = null;
-    try { conta = JSON.parse(localStorage.getItem('pgenfma_empresa')); } catch (err) {}
+    const btn = document.getElementById('btn_entrar_empresa');
+    btn.disabled = true;
+    const r = await entrarConta(identificador, senha);
+    btn.disabled = false;
 
-    if (!conta) {
+    if (!r.sucesso) {
       erro.hidden = false;
-      erro.textContent = 'Nenhum negócio cadastrado neste navegador. Cadastre seu negócio primeiro.';
+      erro.textContent = r.erro;
       return;
     }
-    const confereId = conta.email === identificador || conta.negocio.toLowerCase() === identificador;
-    if (!confereId || conta.senha !== senha) {
-      erro.hidden = false;
-      erro.textContent = 'E-mail/CNPJ ou senha incorretos. Confira e tente de novo.';
-      return;
-    }
-
-    localStorage.setItem('pgenfma_sessao', JSON.stringify({ tipo: 'empresa', email: conta.email }));
+    salvarSessaoLocal(r.usuario);
     window.location.href = 'agenda-prestador.html';
   });
+
+  iniciarLoginSocial({ destino: 'agenda-prestador.html' });
 </script>
 
 </body>
