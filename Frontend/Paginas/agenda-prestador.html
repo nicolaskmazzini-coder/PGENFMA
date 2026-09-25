@@ -87,7 +87,9 @@
   const statusLista = document.getElementById('status_lista');
   const lista = document.getElementById('lista_agendamentos');
   const titulo = document.getElementById('titulo_lista');
-  campoData.value = new Date().toISOString().split('T')[0];
+  // Data local (toISOString é UTC e erra o dia após 21h no BRT)
+  const agoraLocal = new Date();
+  campoData.value = agoraLocal.getFullYear() + '-' + String(agoraLocal.getMonth() + 1).padStart(2, '0') + '-' + String(agoraLocal.getDate()).padStart(2, '0');
 
   let base = []; // resultado do fetch (data ou todos); filtros sao client-side
   const statusAtivos = new Set(STATUS_AGENDAMENTO);

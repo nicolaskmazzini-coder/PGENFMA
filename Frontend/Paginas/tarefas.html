@@ -107,6 +107,7 @@
   campoDataFiltro.value = dataParam || hojeIso;
 
   function moverFiltro(dias) {
+    if (!campoDataFiltro.value) campoDataFiltro.value = hojeIso; // modo "Todas": volta pro dia atual
     const [a, m, d] = campoDataFiltro.value.split('-').map(Number);
     const dt = new Date(a, m - 1, d + dias);
     campoDataFiltro.value = isoLocal(dt);

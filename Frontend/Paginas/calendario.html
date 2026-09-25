@@ -97,7 +97,7 @@
   function desenhar() {
     tituloMes.textContent = MESES[mesVisivel][0].toUpperCase() + MESES[mesVisivel].slice(1) + ' de ' + anoVisivel;
     grade.innerHTML = '';
-    ['D','S','T','Q','Q','S','S'].forEach((d) => {
+    ['S','T','Q','Q','S','S','D'].forEach((d) => {
       const el = document.createElement('div');
       el.className = 'cal-dow';
       el.textContent = d;
@@ -118,7 +118,9 @@
       else if (diaNum > diasNoMes) { iso = isoLocal(new Date(anoVisivel, mesVisivel + 1, diaNum - diasNoMes)); fora = true; }
       else { iso = isoLocal(new Date(anoVisivel, mesVisivel, diaNum)); }
 
-      cell.className = 'cal-cell' + (fora ? ' fora' : '') + (fora ? '' : ' fim-semana') + (iso === hojeIso ? ' cal-hoje' : '') + (iso === diaSelecionado ? ' selecionado' : '');
+      const diaSemana = new Date(iso + 'T12:00:00').getDay(); // 0 = domingo, 6 = sábado
+      const fimSemana = !fora && (diaSemana === 0 || diaSemana === 6);
+      cell.className = 'cal-cell' + (fora ? ' fora' : '') + (fimSemana ? ' fim-semana' : '') + (iso === hojeIso ? ' cal-hoje' : '') + (iso === diaSelecionado ? ' selecionado' : '');
       const num = document.createElement('span');
       num.className = 'cal-num';
       num.textContent = Number(iso.slice(8, 10));

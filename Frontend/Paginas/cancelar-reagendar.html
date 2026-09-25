@@ -83,7 +83,9 @@
   const id = params.get('id');
   const box = document.getElementById('detalhes');
   const campoNovaData = document.getElementById('txt_nova_data');
-  campoNovaData.min = new Date().toISOString().split('T')[0];
+  const agoraLocal = new Date();
+  const hojeLocal = agoraLocal.getFullYear() + '-' + String(agoraLocal.getMonth() + 1).padStart(2, '0') + '-' + String(agoraLocal.getDate()).padStart(2, '0');
+  campoNovaData.min = hojeLocal;
   let atual = null;
 
   (async () => {

@@ -113,7 +113,9 @@
     // Data mínima = hoje (evita erro "datas passadas" do backend)
     // Aceita ?data=YYYY-MM-DD (vem do calendário)
     const campoData = document.getElementById('txt_data');
-    const hoje = new Date().toISOString().split('T')[0];
+    // Data local (toISOString é UTC e erra o dia após 21h no BRT)
+    const agora = new Date();
+    const hoje = agora.getFullYear() + '-' + String(agora.getMonth() + 1).padStart(2, '0') + '-' + String(agora.getDate()).padStart(2, '0');
     campoData.min = hoje;
     const dataParam = new URLSearchParams(window.location.search).get('data');
     campoData.value = (dataParam && dataParam >= hoje) ? dataParam : hoje;
