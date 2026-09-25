@@ -36,6 +36,7 @@
 
     <section>
       <h2 id="titulo_dia">Escolha um dia</h2>
+      <div class="chips-status" id="chips_status_dia" role="group" aria-label="Filtrar agendamentos por status"></div>
       <p id="status_dia">Clique em um dia do calendário para ver os agendamentos.</p>
       <ul id="lista_dia"></ul>
       <div class="conf-acoes" style="justify-content:flex-start">
@@ -67,6 +68,11 @@
   let porData = {}; // 'YYYY-MM-DD' -> [agendamentos]
   let tarefasPorData = {}; // 'YYYY-MM-DD' -> [tarefas]
   let diaSelecionado = null;
+
+  const statusAtivosDia = new Set(STATUS_AGENDAMENTO);
+  montarChipsStatus(document.getElementById('chips_status_dia'), statusAtivosDia, () => {
+    if (diaSelecionado) mostrarDia(diaSelecionado);
+  });
 
   const isoLocal = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
@@ -132,15 +138,21 @@
     tituloDia.textContent = 'Dia ' + iso.split('-').reverse().join('/');
     document.getElementById('link_agendar_dia').href = 'agendamento.html?data=' + iso;
     document.getElementById('link_tarefa_dia').href = 'tarefas.html?data=' + iso;
-    const itens = porData[iso] || [];
+    const todos = porData[iso] || [];
+    const itens = todos.filter((a) => statusAtivosDia.has(a.status));
     const tfs = tarefasPorData[iso] || [];
     listaDia.innerHTML = '';
 
-    if (!itens.length && !tfs.length) {
+    if (!todos.length && !tfs.length) {
       statusDia.textContent = 'Nada marcado neste dia. Todos os horários estão livres!';
       return;
     }
-    statusDia.textContent = itens.length + ' agendamento(s) e ' + tfs.length + ' tarefa(s).';
+    if (!itens.length && !tfs.length) {
+      statusDia.textContent = '0/' + todos.length + ' agendamento(s) - nada corresponde aos filtros atuais.';
+      return;
+    }
+    statusDia.textContent = itens.length + '/' + todos.length + ' agendamento(s) e ' +
+      tfs.length + ' tarefa(s).';
 
     itens.forEach((a) => {
       const li = document.createElement('li');

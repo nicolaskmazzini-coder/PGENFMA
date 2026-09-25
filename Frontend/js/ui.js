@@ -94,3 +94,29 @@ function esqueletoCard(classeExtra = '') {
     '<div class="sk-linha curta"></div>' +
     '</div>';
 }
+
+// ==========================================
+// Chips de status de agendamento (filtros)
+// Uso: const ativos = new Set(STATUS_AGENDAMENTO);
+//      montarChipsStatus(el, ativos, () => aplicar())
+// ==========================================
+
+const STATUS_AGENDAMENTO = ['agendado', 'confirmado', 'concluido', 'cancelado'];
+
+function montarChipsStatus(el, ativos, aoMudar) {
+  if (!el) return;
+  el.innerHTML = '';
+  STATUS_AGENDAMENTO.forEach((st) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip-status' + (ativos.has(st) ? ' ativo' : '');
+    b.dataset.status = st;
+    b.textContent = st;
+    b.onclick = () => {
+      if (ativos.has(st)) ativos.delete(st); else ativos.add(st);
+      b.classList.toggle('ativo', ativos.has(st));
+      aoMudar();
+    };
+    el.appendChild(b);
+  });
+}

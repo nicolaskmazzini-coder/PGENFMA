@@ -503,6 +503,55 @@ a { color: var(--link); }
 .cat-chip.saude { background: var(--ok-soft); color: var(--ok-text); }
 .cat-chip.pessoal { background: var(--fill-2); color: var(--muted); }
 
+/* ---------- Filtros de agenda ---------- */
+.filtros-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 10px 0;
+}
+.filtros-bar input[type="search"] { flex: 1 1 200px; margin: 0; }
+.filtros-bar input[type="date"],
+.filtros-bar select { width: auto; margin: 0; }
+.filtros-bar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0;
+  font-size: .9rem;
+  color: var(--muted);
+}
+.filtros-bar label input[type="date"] { margin: 0; }
+.chips-status {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 4px;
+}
+.chips-status .chip-status {
+  background: var(--input-bg);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 5px 14px;
+  font-size: .85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+.chips-status .chip-status:hover { background: var(--brand-soft); color: var(--brand-text); box-shadow: none; }
+.chips-status .chip-status.ativo { background: var(--brand); color: #fff; border-color: var(--brand); }
+.chips-status .chip-status.ativo:hover { background: var(--brand-dark); color: #fff; }
+.filtros-rodape {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.filtros-rodape #contagem { color: var(--muted); font-size: .9rem; margin-right: auto; }
+
 /* ---------- Perfil ---------- */
 .perfil-topo { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
 .avatar-perfil {

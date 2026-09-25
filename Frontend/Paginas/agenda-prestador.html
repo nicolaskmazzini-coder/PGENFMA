@@ -26,11 +26,26 @@
   <main>
 
     <section>
-      <h2>Filtrar por data</h2>
-      <label for="filtro_data">Data</label>
-      <input type="date" id="filtro_data">
-      <button type="button" id="btn_filtrar">Buscar</button>
-      <button type="button" id="btn_ver_todos">Ver todos</button>
+      <h2>Filtros</h2>
+      <div class="filtros-bar">
+        <input type="search" id="filtro_texto" placeholder="Buscar por cliente ou serviço..." aria-label="Buscar por cliente ou serviço">
+        <label for="filtro_data">Data <input type="date" id="filtro_data"></label>
+        <label for="filtro_de">De <input type="date" id="filtro_de"></label>
+        <label for="filtro_ate">Até <input type="date" id="filtro_ate"></label>
+        <select id="filtro_ordem" aria-label="Ordenar por">
+          <option value="data_asc">Data &#8593;</option>
+          <option value="data_desc">Data &#8595;</option>
+          <option value="horario_asc">Horário &#8593;</option>
+          <option value="horario_desc">Horário &#8595;</option>
+        </select>
+      </div>
+      <div class="chips-status" id="chips_status" role="group" aria-label="Filtrar por status"></div>
+      <div class="filtros-rodape">
+        <span id="contagem">—</span>
+        <button type="button" id="btn_filtrar">Buscar</button>
+        <button type="button" id="btn_ver_todos" class="secundario">Ver todos</button>
+        <button type="button" id="btn_limpar" class="secundario mini">Limpar filtros</button>
+      </div>
     </section>
 
     <section>
@@ -46,24 +61,61 @@
 <script src="../js/api.js"></script>
 <script>
   const campoData = document.getElementById('filtro_data');
+  const campoTexto = document.getElementById('filtro_texto');
+  const campoDe = document.getElementById('filtro_de');
+  const campoAte = document.getElementById('filtro_ate');
+  const campoOrdem = document.getElementById('filtro_ordem');
+  const contagem = document.getElementById('contagem');
   const statusLista = document.getElementById('status_lista');
   const lista = document.getElementById('lista_agendamentos');
   const titulo = document.getElementById('titulo_lista');
   campoData.value = new Date().toISOString().split('T')[0];
 
+  let base = []; // resultado do fetch (data ou todos); filtros sao client-side
+  const statusAtivos = new Set(STATUS_AGENDAMENTO);
+
+  const escapar = (v) => String(v == null ? '' : v).replace(/[&<>"]/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function aplicar() {
+    const txt = campoTexto.value.trim().toLowerCase();
+    const de = campoDe.value;
+    const ate = campoAte.value;
+
+    const dados = base.filter((a) => {
+      if (!statusAtivos.has(a.status)) return false;
+      if (txt && !(String(a.nome_cliente || '').toLowerCase().includes(txt) ||
+                   String(a.servico || '').toLowerCase().includes(txt))) return false;
+      if (de && a.data < de) return false;
+      if (ate && a.data > ate) return false;
+      return true;
+    });
+
+    const [campo, ordem] = campoOrdem.value.split('_');
+    dados.sort((x, y) => {
+      const c = campo === 'horario'
+        ? x.horario.localeCompare(y.horario) || x.data.localeCompare(y.data)
+        : x.data.localeCompare(y.data) || x.horario.localeCompare(y.horario);
+      return ordem === 'desc' ? -c : c;
+    });
+
+    renderizar(dados);
+    contagem.textContent = dados.length + ' de ' + base.length + ' agendamento(s)';
+  }
+
   function renderizar(agendamentos) {
     lista.innerHTML = '';
     if (!agendamentos.length) {
-      statusLista.textContent = '';
-      lista.innerHTML = '<div class="vazio"><span class="vazio-ico">📭</span>Nenhum agendamento encontrado.</div>';
+      statusLista.textContent = base.length ? 'Nada corresponde aos filtros atuais.' : '';
+      lista.innerHTML = '<div class="vazio"><span class="vazio-ico">🔍</span>Nenhum agendamento encontrado.</div>';
       return;
     }
-    statusLista.textContent = agendamentos.length + ' agendamento(s).';
+    statusLista.textContent = '';
     agendamentos.forEach((a) => {
       const li = document.createElement('li');
-      li.innerHTML = '<div><p>' + a.nome_cliente + ' - ' + a.servico + '</p>' +
-        '<p class="t-meta">' + a.data.split('-').reverse().join('/') + ' às ' + a.horario + '</p></div>' +
-        '<span class="badge ' + a.status + '">' + a.status + '</span>';
+      li.innerHTML = '<div><p>' + escapar(a.nome_cliente) + ' - ' + escapar(a.servico) + '</p>' +
+        '<p class="t-meta">' + escapar(a.data.split('-').reverse().join('/')) + ' às ' + escapar(a.horario) + '</p></div>' +
+        '<span class="badge ' + escapar(a.status) + '">' + escapar(a.status) + '</span>';
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'mini perigo';
@@ -81,19 +133,39 @@
 
   async function carregar(data) {
     statusLista.textContent = '';
+    contagem.textContent = '\u2026';
     lista.innerHTML = esqueleto(3);
     const r = data ? await buscarAgendamentosPorData(data) : await listarAgendamentos();
     if (!r.sucesso) {
       statusLista.textContent = '';
-      lista.innerHTML = '<div class="vazio">Erro: ' + r.erro + ' — o backend está rodando?</div>';
+      contagem.textContent = '—';
+      lista.innerHTML = '<div class="vazio">Erro: ' + escapar(r.erro) + ' — o backend está rodando?</div>';
       return;
     }
+    base = r.dados;
     titulo.textContent = data ? 'Agendamentos de ' + data.split('-').reverse().join('/') : 'Todos os agendamentos';
-    renderizar(r.dados);
+    aplicar();
   }
 
+  campoTexto.oninput = aplicar;
+  campoDe.onchange = aplicar;
+  campoAte.onchange = aplicar;
+  campoOrdem.onchange = aplicar;
+  montarChipsStatus(document.getElementById('chips_status'), statusAtivos, aplicar);
+
   document.getElementById('btn_filtrar').onclick = () => carregar(campoData.value || null);
-  document.getElementById('btn_ver_todos').onclick = () => carregar(null);
+  document.getElementById('btn_ver_todos').onclick = () => { campoData.value = ''; carregar(null); };
+  document.getElementById('btn_limpar').onclick = () => {
+    campoTexto.value = '';
+    campoDe.value = '';
+    campoAte.value = '';
+    campoData.value = '';
+    campoOrdem.value = 'data_asc';
+    statusAtivos.clear();
+    STATUS_AGENDAMENTO.forEach((st) => statusAtivos.add(st));
+    montarChipsStatus(document.getElementById('chips_status'), statusAtivos, aplicar);
+    carregar(null);
+  };
   carregar(campoData.value);
 </script>
 
