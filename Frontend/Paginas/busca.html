@@ -74,7 +74,7 @@
     );
     lista.innerHTML = '';
     if (!resultados.length) {
-      status.innerHTML = '<div class="vazio"><span class="vazio-ico">🔍</span>Nenhum resultado para "' + termo + '".</div>';
+      status.innerHTML = '<div class="vazio"><span class="vazio-ico">🔍</span>Nenhum resultado para "' + esc(termo) + '".</div>';
       return;
     }
     status.innerHTML = '';
@@ -82,9 +82,9 @@
       const li = document.createElement('li');
       const a = document.createElement('a');
       a.href = 'detalhes-prestador.html?id=' + p.id;
-      a.innerHTML = '<p>' + p.nome + '</p>' +
-        '<span class="badge">⭐ ' + p.estrelas + ' · ' + p.avaliacoes + ' avaliações</span>' +
-        '<p class="t-meta">' + p.categoria + ' · ' + p.bairro + '</p>';
+      a.innerHTML = '<p>' + esc(p.nome) + '</p>' +
+        '<span class="badge">⭐ ' + esc(p.estrelas) + ' · ' + esc(p.avaliacoes) + ' avaliações</span>' +
+        '<p class="t-meta">' + esc(p.categoria) + ' · ' + esc(p.bairro) + '</p>';
       li.appendChild(a);
       lista.appendChild(li);
     });

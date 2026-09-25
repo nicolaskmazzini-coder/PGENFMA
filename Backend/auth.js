@@ -176,6 +176,10 @@ router.post('/oauth', async (req, res) => {
             db.get('SELECT * FROM usuarios WHERE email = ?', [dados.email], (err2, existente) => {
                 if (err2) return res.status(500).json({ sucesso: false, erro: 'Erro interno' });
 
+                if (existente && !dados.emailVerificado) {
+                    return res.status(403).json({ sucesso: false, erro: 'E-mail já cadastrado. Entre com sua senha para vincular.' });
+                }
+
                 if (existente) {
                     // Vincula a conta existente ao provedor
                     db.run(
@@ -218,11 +222,19 @@ async function verificarGoogle(idToken) {
     if (!r.ok) throw new Error('Credencial do Google inválida ou expirada.');
     const info = await r.json();
     if (info.aud !== clientId) throw new Error('Audiência inválida.');
+    if (info.iss !== 'https://accounts.google.com' && info.iss !== 'accounts.google.com') {
+        throw new Error('Emissor inválido.');
+    }
     if (!info.email) throw new Error('Google não retornou o e-mail.');
+    // Só vincula contas com e-mail verificado (evita takeover por e-mail não confirmado)
+    if (info.email_verified !== 'true' && info.email_verified !== true) {
+        throw new Error('E-mail do Google não verificado.');
+    }
 
     return {
         id: info.sub,
         email: info.email.toLowerCase(),
+        emailVerificado: true,
         nome: info.name || info.email,
         foto: info.picture || null,
         nonce: info.nonce || null
@@ -278,7 +290,9 @@ async function verificarMicrosoft(token, nonceEsperado) {
         email,
         nome: payload.name || email,
         foto: null,
-        nonce: payload.nonce || null
+        nonce: payload.nonce || null,
+        // Conta autenticada pelo próprio IdP: identidade verificada
+        emailVerificado: true
     };
 }
 

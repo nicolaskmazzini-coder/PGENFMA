@@ -174,8 +174,8 @@
 
     itens.forEach((a) => {
       const li = document.createElement('li');
-      li.innerHTML = '<span>' + a.horario + '</span><p>' + a.nome_cliente + ' - ' + a.servico + '</p>' +
-        '<span class="badge ' + a.status + '">' + a.status + '</span>';
+      li.innerHTML = '<span>' + esc(a.horario) + '</span><p>' + esc(a.nome_cliente) + ' - ' + esc(a.servico) + '</p>' +
+        '<span class="badge ' + esc(a.status) + '">' + esc(a.status) + '</span>';
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'mini perigo';
@@ -193,9 +193,9 @@
     tfs.forEach((t) => {
       const li = document.createElement('li');
       li.className = 'tarefa-item' + (t.concluido ? ' feita' : '');
-      li.innerHTML = '<div><p class="t-titulo">' + t.titulo + '</p>' +
-        '<p class="t-meta">' + (t.hora ? t.hora + ' · ' : '') +
-        '<span class="cat-chip ' + t.categoria + '">' + t.categoria + '</span></p></div>';
+      li.innerHTML = '<div><p class="t-titulo">' + esc(t.titulo) + '</p>' +
+        '<p class="t-meta">' + (t.hora ? esc(t.hora) + ' · ' : '') +
+        '<span class="cat-chip ' + esc(t.categoria) + '">' + esc(t.categoria) + '</span></p></div>';
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'mini secundario';

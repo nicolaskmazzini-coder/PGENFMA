@@ -77,17 +77,17 @@
     const resultado = await buscarAgendamentoPorId(id);
     if (!resultado.sucesso) {
       resumo.innerHTML = '<div class="conf-ico">✓</div><h1>Agendamento confirmado!</h1>' +
-        '<p>Não foi possível carregar os detalhes: ' + resultado.erro + '</p>';
+        '<p>Não foi possível carregar os detalhes: ' + esc(resultado.erro) + '</p>';
       return;
     }
     const a = resultado.dados;
     resumo.innerHTML =
       '<div class="conf-ico">✓</div>' +
       '<h1>Agendamento confirmado!</h1>' +
-      '<p style="font-size:1.15rem;color:var(--ink);font-weight:500;margin:4px 0">' + a.servico + '</p>' +
-      '<p>' + a.nome_cliente + ' — ' + a.data.split('-').reverse().join('/') + ' às ' + a.horario + '</p>' +
-      (a.telefone ? '<p>' + a.telefone + '</p>' : '') +
-      '<p><span class="badge ' + a.status + '">' + a.status + '</span> · #' + a.id + '</p>';
+      '<p style="font-size:1.15rem;color:var(--ink);font-weight:500;margin:4px 0">' + esc(a.servico) + '</p>' +
+      '<p>' + esc(a.nome_cliente) + ' — ' + esc(a.data.split('-').reverse().join('/')) + ' às ' + esc(a.horario) + '</p>' +
+      (a.telefone ? '<p>' + esc(a.telefone) + '</p>' : '') +
+      '<p><span class="badge ' + esc(a.status) + '">' + esc(a.status) + '</span> · #' + esc(a.id) + '</p>';
     toast('Agendamento criado com sucesso!', 'sucesso');
   })();
 </script>

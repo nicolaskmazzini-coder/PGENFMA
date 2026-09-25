@@ -93,14 +93,14 @@
     }
     const r = await buscarAgendamentoPorId(id);
     if (!r.sucesso) {
-      box.innerHTML = '<p>Erro: ' + r.erro + '</p>';
+      box.innerHTML = '<p>Erro: ' + esc(r.erro) + '</p>';
       return;
     }
     atual = r.dados;
     campoNovaData.value = atual.data;
-    box.innerHTML = '<p><strong>' + atual.servico + '</strong></p>' +
-      '<p>' + atual.nome_cliente + ' — ' + atual.data + ' às ' + atual.horario + '</p>' +
-      '<p>Status: ' + atual.status + ' (ID ' + atual.id + ')</p>';
+    box.innerHTML = '<p><strong>' + esc(atual.servico) + '</strong></p>' +
+      '<p>' + esc(atual.nome_cliente) + ' — ' + esc(atual.data) + ' às ' + esc(atual.horario) + '</p>' +
+      '<p>Status: ' + esc(atual.status) + ' (ID ' + esc(atual.id) + ')</p>';
   })();
 
   document.getElementById('form_reagendar').addEventListener('submit', async (e) => {

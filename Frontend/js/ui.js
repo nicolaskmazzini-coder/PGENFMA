@@ -120,3 +120,14 @@ function montarChipsStatus(el, ativos, aoMudar) {
     el.appendChild(b);
   });
 }
+
+// ==========================================
+// Escape de HTML (anti-XSS)
+// Uso: '<p>' + esc(a.nome_cliente) + '</p>'
+// ==========================================
+
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}

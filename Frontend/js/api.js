@@ -287,7 +287,7 @@ function configAuth() {
 
 // Mantém as chaves de localStorage que o resto do sistema já usa
 function salvarSessaoLocal(usuario) {
-    localStorage.setItem('saops_sessao', JSON.stringify({ tipo: usuario.tipo || 'cliente', email: usuario.email }));
+    localStorage.setItem('saops_usuario', JSON.stringify({ tipo: usuario.tipo || 'cliente', email: usuario.email }));
     localStorage.setItem('nome_cliente', usuario.nome || '');
     localStorage.setItem('email_cliente', usuario.email || '');
     if (usuario.telefone) localStorage.setItem('telefone', usuario.telefone);

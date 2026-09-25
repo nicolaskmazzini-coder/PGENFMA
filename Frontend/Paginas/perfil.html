@@ -201,7 +201,7 @@
 
   document.getElementById('btn_sair_conta').onclick = async () => {
     await sairConta();
-    localStorage.removeItem('saops_sessao');
+    localStorage.removeItem('saops_usuario');
     localStorage.removeItem('nome_cliente');
     localStorage.removeItem('email_cliente');
     localStorage.removeItem('telefone');
@@ -228,11 +228,11 @@
     const nome = (localStorage.getItem('nome_cliente') || '').toLowerCase();
     const r = await listarAgendamentos();
     if (!r.sucesso) {
-      lista.innerHTML = '<div class="vazio">Erro: ' + r.erro + ' — o backend está rodando?</div>';
+      lista.innerHTML = '<div class="vazio">Erro: ' + esc(r.erro) + ' — o backend está rodando?</div>';
       status.textContent = '';
       return;
     }
-    const meus = nome ? r.dados.filter((a) => a.nome_cliente.toLowerCase() === nome) : r.dados;
+    const meus = nome ? r.dados.filter((a) => String(a.nome_cliente || '').toLowerCase() === nome) : r.dados;
     if (!meus.length) {
       status.textContent = '';
       lista.innerHTML = '<div class="vazio"><span class="vazio-ico">📅</span>' +
@@ -244,9 +244,9 @@
     lista.innerHTML = '';
     meus.forEach((a) => {
       const li = document.createElement('li');
-      li.innerHTML = '<div><p>' + a.servico + '</p>' +
+      li.innerHTML = '<div><p>' + esc(a.servico) + '</p>' +
         '<p class="t-meta">' + a.data.split('-').reverse().join('/') + ' às ' + a.horario + '</p></div>' +
-        '<span class="badge ' + a.status + '">' + a.status + '</span>';
+        '<span class="badge ' + esc(a.status) + '">' + esc(a.status) + '</span>';
       const link = document.createElement('a');
       link.href = 'cancelar-reagendar.html?id=' + a.id;
       link.innerHTML = '<button type="button" class="secundario mini">Cancelar ou reagendar</button>';

@@ -133,9 +133,9 @@
       li.className = 'tarefa-item' + (t.concluido ? ' feita' : '');
 
       const esq = document.createElement('div');
-      esq.innerHTML = '<p class="t-titulo">' + t.titulo + '</p>' +
-        '<p class="t-meta">' + t.data.split('-').reverse().join('/') + (t.hora ? ' às ' + t.hora : '') +
-        ' <span class="cat-chip ' + t.categoria + '">' + t.categoria + '</span></p>';
+      esq.innerHTML = '<p class="t-titulo">' + esc(t.titulo) + '</p>' +
+        '<p class="t-meta">' + esc(t.data.split('-').reverse().join('/')) + (t.hora ? ' às ' + esc(t.hora) : '') +
+        ' <span class="cat-chip ' + esc(t.categoria) + '">' + esc(t.categoria) + '</span></p>';
 
       const acoes = document.createElement('div');
       acoes.className = 't-acoes';
@@ -172,7 +172,7 @@
     const filtro = campoDataFiltro.value ? { data: campoDataFiltro.value } : {};
     const r = await listarTarefas(filtro);
     if (!r.sucesso) {
-      lista.innerHTML = '<div class="vazio">Erro: ' + r.erro + ' — o backend está rodando?</div>';
+      lista.innerHTML = '<div class="vazio">Erro: ' + esc(r.erro) + ' — o backend está rodando?</div>';
       statusLista.textContent = '';
       return;
     }
