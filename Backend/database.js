@@ -11,6 +11,8 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.error(' Erro ao conectar no banco:', err.message);
     } else {
         console.log(' Conectado ao banco de dados SQLite');
+        // Chaves estrangeiras precisam deste PRAGMA por conexão
+        db.run('PRAGMA foreign_keys = ON');
     }
 });
 
@@ -83,7 +85,20 @@ db.serialize(() => {
             db.run("DELETE FROM sessoes WHERE expira_em < datetime('now')");
         }
     });
+    // Impede double-booking mesmo em escritas concorrentes (vale para
+    // bancos já existentes; se houver duplicatas antigas, só avisa)
+    db.run('CREATE UNIQUE INDEX IF NOT EXISTS idx_ag_data_horario ON agendamentos(data, horario)', (err) => {
+        if (err) console.error(' Aviso: índice único data+horario não criado:', err.message);
+        else console.log(' Índice único data+horario pronto!');
+    });
+    db.run('CREATE INDEX IF NOT EXISTS idx_sessoes_expira ON sessoes(expira_em)');
+    db.run('CREATE INDEX IF NOT EXISTS idx_sessoes_usuario ON sessoes(usuario_id)');
 });
+
+// Limpa sessões expiradas a cada hora (não só no boot)
+setInterval(() => {
+    db.run("DELETE FROM sessoes WHERE expira_em < datetime('now')");
+}, 60 * 60 * 1000);
 
 // Exporta o banco para usar em outros arquivos
 module.exports = db;

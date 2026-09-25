@@ -11,8 +11,11 @@
   });
 
   // Preenche os avatares (foto salva ou iniciais do nome)
-  const foto = localStorage.getItem('saops_foto') || '';
-  const nome = localStorage.getItem('nome_cliente') || localStorage.getItem('email_cliente') || '';
+  let foto = '', nome = '';
+  try {
+    foto = localStorage.getItem('saops_foto') || '';
+    nome = localStorage.getItem('nome_cliente') || localStorage.getItem('email_cliente') || '';
+  } catch (e) { /* sem armazenamento: usa iniciais padrão */ }
   const iniciais = nome
     ? nome.trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join('')
     : 'P';

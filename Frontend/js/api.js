@@ -225,22 +225,6 @@ async function deletarTarefa(id) {
     }
 }
 
-/*
-// Criar agendamento
-const resultado = await criarAgendamento({
-    nome_cliente: "João Silva",
-    servico: "Corte de Cabelo",
-    data: "2024-04-25",
-    horario: "14:30",
-    telefone: "(11) 98765-4321"
-});
-
-if (resultado.sucesso) {
-    console.log("Agendamento criado com ID:", resultado.dados.id);
-} else {
-    console.log("Erro:", resultado.erro);
-}
-*/
 // ==========================================
 // AUTENTICAÇÃO (/api/auth/*)
 // ==========================================
@@ -287,8 +271,10 @@ function configAuth() {
 
 // Mantém as chaves de localStorage que o resto do sistema já usa
 function salvarSessaoLocal(usuario) {
-    localStorage.setItem('saops_usuario', JSON.stringify({ tipo: usuario.tipo || 'cliente', email: usuario.email }));
-    localStorage.setItem('nome_cliente', usuario.nome || '');
-    localStorage.setItem('email_cliente', usuario.email || '');
-    if (usuario.telefone) localStorage.setItem('telefone', usuario.telefone);
+    try {
+        localStorage.setItem('saops_usuario', JSON.stringify({ tipo: usuario.tipo || 'cliente', email: usuario.email }));
+        localStorage.setItem('nome_cliente', usuario.nome || '');
+        localStorage.setItem('email_cliente', usuario.email || '');
+        if (usuario.telefone) localStorage.setItem('telefone', usuario.telefone);
+    } catch (e) { /* modo privado/cota cheia: segue sem salvar */ }
 }

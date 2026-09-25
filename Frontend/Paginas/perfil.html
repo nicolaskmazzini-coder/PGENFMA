@@ -93,9 +93,7 @@
       <p id="lembrete_status" class="t-meta">—</p>
     </section>
 
-    <a href="index.html">
-      <button type="button" id="btn_sair_conta" class="perigo">Sair da conta</button>
-    </a>
+    <button type="button" id="btn_sair_conta" class="perigo">Sair da conta</button>
 
   </main>
 
@@ -207,6 +205,7 @@
     localStorage.removeItem('telefone');
     toast('Sessão encerrada.', 'info');
     pintarAvatar();
+    setTimeout(() => { window.location.href = 'index.html'; }, 600);
   };
 
   // Se não houver dados locais, completa pela sessão do servidor

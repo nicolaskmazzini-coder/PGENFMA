@@ -13,13 +13,23 @@ const COOKIE = 'saops_token';
 const SESSAO_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Telefone opcional com 10 ou 11 dígitos (mesma regra dos agendamentos)
+function validarTelefoneLocal(tel) {
+    if (!tel) return true;
+    const numeros = String(tel).replace(/\D/g, '');
+    return numeros.length >= 10 && numeros.length <= 11;
+}
+
 // ---------- helpers ----------
 
 function lerCookies(req) {
     const out = {};
     (req.headers.cookie || '').split(';').forEach((p) => {
         const i = p.indexOf('=');
-        if (i > 0) out[p.slice(0, i).trim()] = decodeURIComponent(p.slice(i + 1).trim());
+        if (i <= 0) return;
+        try {
+            out[p.slice(0, i).trim()] = decodeURIComponent(p.slice(i + 1).trim());
+        } catch (e) { /* cookie malformado: ignora */ }
     });
     return out;
 }
@@ -86,7 +96,9 @@ router.post('/cadastro', (req, res) => {
 
     if (!nome || !nome.trim()) return res.status(400).json({ sucesso: false, erro: 'Informe seu nome.' });
     if (!EMAIL_REGEX.test(emailNorm)) return res.status(400).json({ sucesso: false, erro: 'E-mail inválido.' });
-    if (!senha || senha.length < 4) return res.status(400).json({ sucesso: false, erro: 'A senha deve ter ao menos 4 caracteres.' });
+    if (!senha || senha.length < 8) return res.status(400).json({ sucesso: false, erro: 'A senha deve ter ao menos 8 caracteres.' });
+    if (senha.length > 72) return res.status(400).json({ sucesso: false, erro: 'A senha deve ter no máximo 72 caracteres.' });
+    if (telefone && !validarTelefoneLocal(telefone)) return res.status(400).json({ sucesso: false, erro: 'Telefone inválido. Deve ter entre 10 e 11 dígitos.' });
 
     const tipoFinal = tipo === 'empresa' ? 'empresa' : 'cliente';
 
@@ -218,7 +230,7 @@ async function verificarGoogle(idToken) {
     if (!clientId) throw new Error('Login com Google não configurado no servidor.');
     if (!idToken) throw new Error('Credencial ausente.');
 
-    const r = await fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken));
+    const r = await fetchComTimeout('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken));
     if (!r.ok) throw new Error('Credencial do Google inválida ou expirada.');
     const info = await r.json();
     if (info.aud !== clientId) throw new Error('Audiência inválida.');
@@ -239,6 +251,30 @@ async function verificarGoogle(idToken) {
         foto: info.picture || null,
         nonce: info.nonce || null
     };
+}
+
+// JWKS da Microsoft com cache de 1h + timeout (evita 1 HTTP por login)
+let JWKS_CACHE = { chaves: [], expira: 0 };
+
+async function buscarJWKS() {
+    if (JWKS_CACHE.chaves.length && Date.now() < JWKS_CACHE.expira) return JWKS_CACHE.chaves;
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 8000);
+    try {
+        const r = await fetch('https://login.microsoftonline.com/common/discovery/v2.0/keys', { signal: ctrl.signal });
+        if (!r.ok) throw new Error('Falha ao consultar as chaves da Microsoft.');
+        const jwks = await r.json();
+        JWKS_CACHE = { chaves: jwks.keys || [], expira: Date.now() + 60 * 60 * 1000 };
+        return JWKS_CACHE.chaves;
+    } finally {
+        clearTimeout(t);
+    }
+}
+
+function fetchComTimeout(url, ms = 8000) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(t));
 }
 
 // Microsoft: valida assinatura RS256 do id_token via JWKS oficial + aud/iss/exp/nonce
@@ -267,10 +303,9 @@ async function verificarMicrosoft(token, nonceEsperado) {
     if (nonceEsperado && payload.nonce !== nonceEsperado) throw new Error('Nonce inválido.');
 
     // Busca as chaves públicas da Microsoft e confere a assinatura
-    const jwksResp = await fetch('https://login.microsoftonline.com/common/discovery/v2.0/keys');
-    if (!jwksResp.ok) throw new Error('Falha ao consultar as chaves da Microsoft.');
-    const jwks = await jwksResp.json();
-    const jwk = (jwks.keys || []).find((k) => k.kid === header.kid);
+    if (header.alg !== 'RS256') throw new Error('Algoritmo do token inválido.');
+    const chaves = await buscarJWKS();
+    const jwk = (chaves || []).find((k) => k.kid === header.kid);
     if (!jwk) throw new Error('Chave do token não encontrada.');
 
     const chave = crypto.createPublicKey({ key: jwk, format: 'jwk' });
