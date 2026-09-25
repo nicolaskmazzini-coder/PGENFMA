@@ -3,6 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SAOPS: agende horários em barbearias, salões e clínicas perto de você. Calendário, tarefas e lembretes gratuitos, com login Google e Microsoft.">
+  <meta name="theme-color" content="#1a73e8">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://saops.onrender.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SAOPS">
+  <meta property="og:title" content="SAOPS - Início">
+  <meta property="og:description" content="SAOPS: agende horários em barbearias, salões e clínicas perto de você. Calendário, tarefas e lembretes gratuitos, com login Google e Microsoft.">
+  <meta property="og:url" content="https://saops.onrender.com/">
+  <meta property="og:image" content="https://saops.onrender.com/img/og-saops.png">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SAOPS - Início">
+  <meta name="twitter:description" content="SAOPS: agende horários em barbearias, salões e clínicas perto de você. Calendário, tarefas e lembretes gratuitos, com login Google e Microsoft.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <title>SAOPS - Início</title>
   <link rel="stylesheet" href="../CSS/style.css">
   <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
@@ -48,7 +64,109 @@
         </a>
       </nav>
     </section>
+
+    <section class="faq">
+      <h2>Perguntas frequentes</h2>
+      <details open>
+        <summary>O SAOPS é gratuito?</summary>
+        <p>Sim. Agendamentos, calendário, tarefas e lembretes são 100% gratuitos, para cliente e prestador.</p>
+      </details>
+      <details>
+        <summary>Preciso criar conta para agendar?</summary>
+        <p>Não. Você pode marcar horário direto. A conta (e-mail, Google ou Microsoft) habilita perfil com foto, lembretes e sincronização da sessão.</p>
+      </details>
+      <details>
+        <summary>Como o prestador usa o SAOPS?</summary>
+        <p>Cadastre seu negócio em "Sou prestador", publique seus serviços e acompanhe a agenda com filtros por status, data e horário.</p>
+      </details>
+      <details>
+        <summary>Funciona no celular?</summary>
+        <p>Sim. O site é responsivo e também funciona como aplicativo pela tela inicial (PWA), nos dois temas, claro e escuro.</p>
+      </details>
+    </section>
   </main>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://saops.onrender.com/#org",
+      "name": "SAOPS",
+      "url": "https://saops.onrender.com/",
+      "logo": "https://saops.onrender.com/img/og-saops.png",
+      "inLanguage": "pt-BR"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://saops.onrender.com/#site",
+      "name": "SAOPS",
+      "url": "https://saops.onrender.com/",
+      "inLanguage": "pt-BR",
+      "publisher": {
+        "@id": "https://saops.onrender.com/#org"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "SAOPS",
+      "alternateName": "Sistema de Agendamento SAOPS",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "url": "https://saops.onrender.com/",
+      "inLanguage": "pt-BR",
+      "description": "Sistema de agendamento online gratuito para barbearias, salões e clínicas, com calendário, tarefas e lembretes.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL"
+      },
+      "publisher": {
+        "@id": "https://saops.onrender.com/#org"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O SAOPS é gratuito?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. Agendamentos, calendário, tarefas e lembretes são 100% gratuitos, para cliente e prestador."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Preciso criar conta para agendar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não. Você pode marcar horário direto. A conta (e-mail, Google ou Microsoft) habilita perfil com foto, lembretes e sincronização da sessão."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como o prestador usa o SAOPS?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cadastre seu negócio em \"Sou prestador\", publique seus serviços e acompanhe a agenda com filtros por status, data e horário."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Funciona no celular?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. O site é responsivo e também funciona como aplicativo pela tela inicial (PWA), nos dois temas, claro e escuro."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
 
 <script src="../js/toast.js"></script>
 <script src="../js/ui.js"></script>

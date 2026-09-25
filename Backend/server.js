@@ -524,7 +524,13 @@ app.get('/:pagina', (req, res, next) => {
     const nome = req.params.pagina;
     if (!/^[a-z0-9-]+$/i.test(nome)) return next();
     const arquivo = path.join(__dirname, '..', 'Frontend', 'Paginas', `${nome}.html`);
-    res.sendFile(arquivo, (err) => { if (err) next(); });
+    res.sendFile(arquivo, (err) => {
+        if (err) {
+            // Página inexistente: serve o erro.html com status 404 real (SEO)
+            const erroPage = path.join(__dirname, '..', 'Frontend', 'Paginas', 'erro.html');
+            res.status(404).sendFile(erroPage, (e2) => { if (e2) next(); });
+        }
+    });
 });
 
 // 404 JSON para rotas da API não encontradas
@@ -539,6 +545,12 @@ app.use('/tarefas', (req, res) => {
 // 404 JSON para /api/* desconhecidas
 app.use('/api', (req, res) => {
     res.status(404).json({ erro: 'Rota não encontrada' });
+});
+
+// 404 HTML para qualquer outra rota inexistente (ex: /qualquer/coisa)
+app.use((req, res, next) => {
+    const erroPage = path.join(__dirname, '..', 'Frontend', 'Paginas', 'erro.html');
+    res.status(404).sendFile(erroPage, (e) => { if (e) next(e); });
 });
 
 // Middleware genérico de erro (nunca expõe stack ao cliente)

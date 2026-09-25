@@ -633,6 +633,21 @@ label.linha-toggle {
 .toast-erro { background: var(--danger); }
 .toast-info { background: var(--brand-dark); }
 
+/* ---------- Perguntas frequentes (home) ---------- */
+.faq details {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin: 8px 0;
+  background: var(--bg);
+}
+.faq summary {
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.faq details p { margin: 8px 0 0; }
+
 /* ---------- Sobre nós ---------- */
 .sobre-hero { padding: 36px 24px 30px; }
 .sobre-cta nav { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
