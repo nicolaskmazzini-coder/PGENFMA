@@ -503,6 +503,14 @@ a { color: var(--link); }
 .cat-chip.saude { background: var(--ok-soft); color: var(--ok-text); }
 .cat-chip.pessoal { background: var(--fill-2); color: var(--muted); }
 
+label.linha-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+#lembrete_antecedencia { width: auto; }
+
 /* ---------- Filtros de agenda ---------- */
 .filtros-bar {
   display: flex;

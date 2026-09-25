@@ -61,6 +61,21 @@
       <ul id="lista_perfil"></ul>
     </section>
 
+    <section>
+      <h2>Notificações</h2>
+      <label class="linha-toggle" for="toggle_lembretes">
+        <input type="checkbox" id="toggle_lembretes">
+        Lembretes de agendamento (avise quando faltar pouco pro horário)
+      </label>
+      <label for="lembrete_antecedencia">Avisar com antecedência de</label>
+      <select id="lembrete_antecedencia">
+        <option value="15">15 minutos</option>
+        <option value="30">30 minutos</option>
+        <option value="60">1 hora</option>
+      </select>
+      <p id="lembrete_status" class="t-meta">—</p>
+    </section>
+
     <a href="index.html">
       <button type="button" id="btn_sair_conta" class="perigo">Sair da conta</button>
     </a>
@@ -70,6 +85,7 @@
 <script src="../js/toast.js"></script>
 <script src="../js/ui.js"></script>
 <script src="../js/api.js"></script>
+<script src="../js/lembretes.js"></script>
 <script>
   // ---------- Avatar / foto ----------
   const avatarGrande = document.getElementById('avatar_grande');
@@ -222,6 +238,57 @@
     });
   }
   carregar();
+
+  // ---------- Lembretes (notificações) ----------
+  const toggleLembrete = document.getElementById('toggle_lembretes');
+  const selAntecedencia = document.getElementById('lembrete_antecedencia');
+  const avisoLembrete = document.getElementById('lembrete_status');
+
+  function pintarLembrete() {
+    if (typeof Notification === 'undefined') {
+      toggleLembrete.checked = false;
+      toggleLembrete.disabled = true;
+      avisoLembrete.textContent = 'Este navegador não suporta notificações.';
+      return;
+    }
+    if (Notification.permission === 'denied') {
+      toggleLembrete.checked = false;
+      avisoLembrete.textContent = 'Permissão negada pelo navegador. Libere nas configurações do site.';
+      return;
+    }
+    const ativo = localStorage.getItem('saops_lembretes') === 'on';
+    toggleLembrete.checked = ativo;
+    avisoLembrete.textContent = ativo
+      ? 'Ativo — aviso no site e pelo navegador quando faltar pouco pro horário.'
+      : 'Ative para ser avisado quando faltar pouco pro horário.';
+  }
+
+  toggleLembrete.onchange = async () => {
+    if (toggleLembrete.checked) {
+      let permissao = 'granted';
+      try { permissao = await Notification.requestPermission(); } catch (e) { permissao = 'denied'; }
+      if (permissao !== 'granted') {
+        localStorage.setItem('saops_lembretes', 'off');
+        pintarLembrete();
+        toast('Permissão de notificação não concedida.', 'erro');
+        return;
+      }
+      localStorage.setItem('saops_lembretes', 'on');
+      toast('Lembretes ativados!', 'sucesso');
+    } else {
+      localStorage.setItem('saops_lembretes', 'off');
+      toast('Lembretes desativados.', 'info');
+    }
+    pintarLembrete();
+  };
+
+  selAntecedencia.value = localStorage.getItem('saops_lembrete_antecedencia') || '60';
+  selAntecedencia.onchange = () => {
+    localStorage.setItem('saops_lembrete_antecedencia', selAntecedencia.value);
+    toast('Avisar com ' + selAntecedencia.selectedOptions[0].textContent + ' de antecedência.', 'sucesso');
+  };
+
+  pintarLembrete();
 </script>
 
 <script src="../js/tema.js"></script>
