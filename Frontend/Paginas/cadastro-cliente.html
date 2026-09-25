@@ -102,7 +102,7 @@
     }
     salvarSessaoLocal(r.usuario);
     toast('Conta criada! Bem-vindo(a), ' + r.usuario.nome + '.', 'sucesso');
-    setTimeout(() => { window.location.href = 'busca.html'; }, 400);
+    setTimeout(() => { window.location.href = voltarAposLogin('busca.html'); }, 400);
   });
 </script>
 

@@ -146,7 +146,9 @@
       btnOk.className = 'mini ' + (t.concluido ? 'secundario' : '');
       btnOk.textContent = t.concluido ? 'Reabrir' : 'Concluir';
       btnOk.onclick = async () => {
+        if (!(await exigirLogin('login-cliente.html'))) return;
         const r = await atualizarTarefa(t.id, { concluido: t.concluido ? 0 : 1 });
+        if (r.naoAutenticado) { exigirLogin('login-cliente.html'); return; }
         if (r.sucesso) { toast(t.concluido ? 'Tarefa reaberta.' : 'Tarefa concluída! 🎉', 'sucesso'); carregar(); }
         else toast('Erro: ' + r.erro, 'erro');
       };
@@ -156,7 +158,9 @@
       btnDel.className = 'mini perigo';
       btnDel.textContent = 'Excluir';
       btnDel.onclick = async () => {
+        if (!(await exigirLogin('login-cliente.html'))) return;
         const r = await deletarTarefa(t.id);
+        if (r.naoAutenticado) { exigirLogin('login-cliente.html'); return; }
         if (r.sucesso) { toast('Tarefa excluída.', 'info'); carregar(); }
         else toast('Erro: ' + r.erro, 'erro');
       };
@@ -192,9 +196,11 @@
     erroBox.hidden = true;
 
     const btn = document.getElementById('btn_criar_tarefa');
+    if (!(await exigirLogin('login-cliente.html'))) return;
     btn.disabled = true;
     const r = await criarTarefa({ titulo, data, hora, categoria });
     btn.disabled = false;
+    if (r.naoAutenticado) { exigirLogin('login-cliente.html'); return; }
 
     if (r.sucesso) {
       toast('Tarefa criada!', 'sucesso');

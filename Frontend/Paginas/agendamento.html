@@ -207,8 +207,11 @@
         btn.textContent = 'Enviando...';
 
         try {
+            if (!(await exigirLogin('login-cliente.html'))) return;
             // Chama a API
             const resultado = await criarAgendamento(dados);
+
+            if (resultado.naoAutenticado) { exigirLogin('login-cliente.html'); return; }
 
             if (resultado.sucesso) {
                 // Sucesso! Guarda o ID para a tela de confirmação e redireciona

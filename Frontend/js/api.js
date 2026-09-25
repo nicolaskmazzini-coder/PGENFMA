@@ -33,7 +33,7 @@ async function criarAgendamento(dados) {
             return { sucesso: true, dados: result };
         } else {
             console.error('❌ Erro:', result.erro);
-            return { sucesso: false, erro: result.erro };
+            return { sucesso: false, erro: result.erro, naoAutenticado: response.status === 401 };
         }
     } catch (error) {
         console.error('Erro na requisição:', error);
@@ -128,7 +128,7 @@ async function atualizarAgendamento(id, dados) {
             return { sucesso: true, dados: result };
         } else {
             console.error('❌ Erro:', result.erro);
-            return { sucesso: false, erro: result.erro };
+            return { sucesso: false, erro: result.erro, naoAutenticado: response.status === 401 };
         }
     } catch (error) {
         console.error('Erro na requisição:', error);
@@ -153,7 +153,7 @@ async function deletarAgendamento(id) {
             return { sucesso: true, dados: result };
         } else {
             console.error('❌ Erro:', result.erro);
-            return { sucesso: false, erro: result.erro };
+            return { sucesso: false, erro: result.erro, naoAutenticado: response.status === 401 };
         }
     } catch (error) {
         console.error('Erro na requisição:', error);
@@ -193,7 +193,7 @@ async function criarTarefa(dados) {
         });
         const result = await response.json();
         if (response.ok) return { sucesso: true, dados: result };
-        return { sucesso: false, erro: result.erro };
+        return { sucesso: false, erro: result.erro, naoAutenticado: response.status === 401 };
     } catch (error) {
         return { sucesso: false, erro: error.message };
     }
@@ -208,7 +208,7 @@ async function atualizarTarefa(id, dados) {
         });
         const result = await response.json();
         if (response.ok) return { sucesso: true, dados: result };
-        return { sucesso: false, erro: result.erro };
+        return { sucesso: false, erro: result.erro, naoAutenticado: response.status === 401 };
     } catch (error) {
         return { sucesso: false, erro: error.message };
     }
@@ -219,7 +219,7 @@ async function deletarTarefa(id) {
         const response = await fetch(`${API_URL}/tarefas/${id}`, { method: 'DELETE' });
         const result = await response.json();
         if (response.ok) return { sucesso: true, dados: result };
-        return { sucesso: false, erro: result.erro };
+        return { sucesso: false, erro: result.erro, naoAutenticado: response.status === 401 };
     } catch (error) {
         return { sucesso: false, erro: error.message };
     }

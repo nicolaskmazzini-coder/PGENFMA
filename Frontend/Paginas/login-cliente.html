@@ -88,7 +88,7 @@
       return;
     }
     salvarSessaoLocal(r.usuario);
-    window.location.href = 'busca.html';
+    window.location.href = voltarAposLogin('busca.html');
   });
 
   iniciarLoginSocial({ destino: 'busca.html' });

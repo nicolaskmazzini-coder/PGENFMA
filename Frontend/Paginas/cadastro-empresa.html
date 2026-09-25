@@ -114,7 +114,7 @@
     localStorage.setItem('saops_empresa', JSON.stringify({ negocio, categoria, cnpj, endereco, email }));
     salvarSessaoLocal(r.usuario);
     toast('Negócio cadastrado!', 'sucesso');
-    setTimeout(() => { window.location.href = 'agenda-prestador.html'; }, 400);
+    setTimeout(() => { window.location.href = voltarAposLogin('agenda-prestador.html'); }, 400);
   });
 </script>
 

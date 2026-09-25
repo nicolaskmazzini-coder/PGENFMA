@@ -134,3 +134,36 @@ function esc(v) {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[c]));
 }
+
+// ==========================================
+// Guarda de escrita: exige login
+// Uso: if (!(await exigirLogin('login-cliente.html'))) return;
+// Após o login, voltarAposLogin('busca.html') devolve pra página guardada
+// ==========================================
+
+const CHAVE_VOLTAR = 'saops_voltar';
+
+async function exigirLogin(paginaLogin = 'login-cliente.html') {
+  try {
+    const r = await usuarioAtual();
+    if (r && r.sucesso) return true;
+  } catch (e) { /* sem backend: segue para o fluxo normal de erro */ }
+  try {
+    const aqui = location.pathname.split('/').pop() + location.search;
+    localStorage.setItem(CHAVE_VOLTAR, aqui);
+  } catch (e) { /* sem armazenamento */ }
+  if (typeof toast === 'function') toast('Entre na sua conta para continuar.', 'info');
+  setTimeout(() => { window.location.href = paginaLogin; }, 600);
+  return false;
+}
+
+function voltarAposLogin(padrao) {
+  let v = null;
+  try {
+    v = localStorage.getItem(CHAVE_VOLTAR);
+    localStorage.removeItem(CHAVE_VOLTAR);
+  } catch (e) { /* sem armazenamento */ }
+  // Só volta para páginas .html locais (sem protocolo, sem barras extras)
+  if (v && /^[a-z0-9-]+\.html(\?.*)?$/i.test(v)) return v;
+  return padrao;
+}

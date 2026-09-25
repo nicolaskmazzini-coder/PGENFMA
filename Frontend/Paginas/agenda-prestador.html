@@ -142,7 +142,9 @@
       btn.textContent = 'Cancelar';
       btn.onclick = async () => {
         if (!confirm('Cancelar o agendamento #' + a.id + '?')) return;
+        if (!(await exigirLogin('login-empresa.html'))) return;
         const r = await deletarAgendamento(a.id);
+        if (r.naoAutenticado) { exigirLogin('login-empresa.html'); return; }
         if (r.sucesso) { toast('Agendamento cancelado.', 'info'); carregar(campoData.value || null); }
         else toast('Erro: ' + r.erro, 'erro');
       };

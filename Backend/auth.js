@@ -80,6 +80,14 @@ function usuarioAtual(req) {
     });
 }
 
+// Middleware: escrita (POST/PUT/DELETE) exige sessão válida (401 senão)
+async function exigirLogin(req, res, next) {
+    const u = await usuarioAtual(req);
+    if (!u) return res.status(401).json({ sucesso: false, erro: 'Login necessário.' });
+    req.usuario = u;
+    next();
+}
+
 // ---------- rotas locais ----------
 
 // Config pública dos botões sociais (client IDs não são segredos)
@@ -332,3 +340,4 @@ async function verificarMicrosoft(token, nonceEsperado) {
 }
 
 module.exports = router;
+module.exports.exigirLogin = exigirLogin;

@@ -2,7 +2,7 @@
 
 > SAOPS é um sistema de agendamento online gratuito (TCC) para marcar horários em barbearias, salões, clínicas e outros prestadores. Cliente busca serviços e agenda em segundos; o prestador gerencia a agenda do dia com filtros. Web app em Node.js + SQLite, tema Google Agenda (claro/escuro), 100% em português do Brasil. Em produção em https://saops.onrender.com
 
-O SAOPS conecta clientes e prestadores de serviço: o cliente encontra o serviço, escolhe dia e horário e confirma o agendamento (com opções de cancelar e reagendar); o prestador cadastra serviços e acompanha a agenda com busca por texto, filtros de status (agendado, confirmado, concluído, cancelado) e ordenação. Há lembretes de agendamento, tarefas do dia a dia com categorias, calendário mensal e login local ou social (Google e Microsoft). Os dados são armazenados em SQLite no servidor.
+O SAOPS conecta clientes e prestadores de serviço: o cliente cria a conta gratuita (e-mail, Google ou Microsoft), encontra o serviço, escolhe dia e horário e confirma o agendamento (com opções de cancelar e reagendar); o prestador cadastra serviços e acompanha a agenda com busca por texto, filtros de status (agendado, confirmado, concluído, cancelado) e ordenação. Há lembretes de agendamento, tarefas do dia a dia com categorias, calendário mensal e login local ou social (Google e Microsoft). Os dados são armazenados em SQLite no servidor.
 
 ## Páginas principais
 

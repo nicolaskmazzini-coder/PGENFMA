@@ -111,6 +111,7 @@
     const novaData = campoNovaData.value;
     const novoHorario = document.getElementById('txt_novo_horario').value;
     if (!novaData || !novoHorario) { toast('Escolha a nova data e o novo horário.', 'erro'); return; }
+    if (!(await exigirLogin('login-cliente.html'))) return;
     const r = await atualizarAgendamento(atual.id, {
       nome_cliente: atual.nome_cliente,
       servico: atual.servico,
@@ -129,7 +130,9 @@
     e.preventDefault();
     if (!atual) { toast('Carregue um agendamento primeiro.', 'erro'); return; }
     if (!confirm('Cancelar o agendamento #' + atual.id + '?')) return;
+    if (!(await exigirLogin('login-cliente.html'))) return;
     const r = await deletarAgendamento(atual.id);
+    if (r.naoAutenticado) { exigirLogin('login-cliente.html'); return; }
     if (r.sucesso) {
       toast('Agendamento cancelado.', 'info');
       window.location.href = 'perfil.html';

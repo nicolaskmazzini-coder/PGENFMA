@@ -99,7 +99,7 @@ async function aoEntrar(r, destino) {
   if (r.sucesso && r.usuario) {
     salvarSessaoLocal(r.usuario);
     toast('Bem-vindo(a), ' + r.usuario.nome + '!', 'sucesso');
-    setTimeout(() => { window.location.href = destino; }, 400);
+    setTimeout(() => { window.location.href = voltarAposLogin(destino); }, 400);
   } else {
     toast(r.erro || 'Não foi possível entrar.', 'erro');
   }

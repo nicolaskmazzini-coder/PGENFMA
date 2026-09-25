@@ -6,6 +6,7 @@ const cors = require('cors');
 const path = require('path');
 const db = require('./database'); // Importa o banco de dados
 const rateLimit = require('express-rate-limit');
+const { exigirLogin } = require('./auth'); // escrita exige sessão (401 senão)
 
 // Freio contra força bruta no login/cadastro/OAuth (100 tentativas / 15 min por IP)
 const authLimiter = rateLimit({
@@ -102,7 +103,7 @@ app.get('/api/status', (req, res) => {
 // ========================================
 // CREATE - Criar novo agendamento (COM VALIDAÇÕES!)
 // ========================================
-app.post('/agendamentos', (req, res) => {
+app.post('/agendamentos', exigirLogin, (req, res) => {
     const { nome_cliente, servico, data, horario, telefone, status } = req.body;
 
     // VALIDAÇÃO 1: Campos obrigatórios
@@ -331,7 +332,7 @@ app.get('/agendamentos/data/:data', (req, res) => {
 // UPDATE - Atualizar agendamento 
 
 
-app.put('/agendamentos/:id', (req, res) => {
+app.put('/agendamentos/:id', exigirLogin, (req, res) => {
     const { id } = req.params;
     const { nome_cliente, servico, data, horario, telefone, status } = req.body;
 
@@ -440,7 +441,7 @@ app.put('/agendamentos/:id', (req, res) => {
 
 // DELETE - Deletar agendamento
 
-app.delete('/agendamentos/:id', (req, res) => {
+app.delete('/agendamentos/:id', exigirLogin, (req, res) => {
     const { id } = req.params;
     const sql = 'DELETE FROM agendamentos WHERE id = ?';
 
@@ -498,7 +499,7 @@ app.get('/tarefas/:id', (req, res) => {
 });
 
 // CRIAR tarefa
-app.post('/tarefas', (req, res) => {
+app.post('/tarefas', exigirLogin, (req, res) => {
     const { titulo, data, hora, categoria } = req.body;
 
     if (!titulo || !String(titulo).trim()) {
@@ -530,7 +531,7 @@ app.post('/tarefas', (req, res) => {
 });
 
 // ATUALIZAR tarefa (título, data, hora, categoria, concluido)
-app.put('/tarefas/:id', (req, res) => {
+app.put('/tarefas/:id', exigirLogin, (req, res) => {
     const { id } = req.params;
     const { titulo, data, hora, categoria, concluido } = req.body;
 
@@ -563,7 +564,7 @@ app.put('/tarefas/:id', (req, res) => {
 });
 
 // DELETAR tarefa
-app.delete('/tarefas/:id', (req, res) => {
+app.delete('/tarefas/:id', exigirLogin, (req, res) => {
     db.run('DELETE FROM tarefas WHERE id = ?', [req.params.id], function (err) {
         if (err) { console.error('Erro interno:', err.message); return res.status(500).json({ erro: 'Erro interno do servidor' }); }
         if (this.changes === 0) return res.status(404).json({ erro: 'Tarefa não encontrada' });
