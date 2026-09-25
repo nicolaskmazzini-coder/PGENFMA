@@ -1,8 +1,8 @@
-# Render Blueprint - PGENFMA
+# Render Blueprint - SAOPS
 # Deploy automático a cada push no GitHub
 services:
   - type: web
-    name: pgenfma
+    name: saops
     runtime: node
     plan: free
     region: frankfurt

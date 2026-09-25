@@ -9,7 +9,7 @@ const db = require('./database');
 
 const router = express.Router();
 
-const COOKIE = 'pgenfma_token';
+const COOKIE = 'saops_token';
 const SESSAO_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

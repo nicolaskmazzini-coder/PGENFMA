@@ -79,7 +79,7 @@ function validarTelefone(telefone) {
 // ROTA DE SAÚDE (JSON) — o "/" serve o index.html estático,
 // então o teste da API fica aqui
 app.get('/api/status', (req, res) => {
-    res.json({ status: 'ok', mensagem: 'PGENFMA ativo.' });
+    res.json({ status: 'ok', mensagem: 'SAOPS ativo.' });
 });
 
 // ========================================

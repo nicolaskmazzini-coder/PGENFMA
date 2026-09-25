@@ -61,8 +61,8 @@ function abrirMicrosoft(destino) {
     return;
   }
   const nonce = crypto.randomUUID();
-  sessionStorage.setItem('pgenfma_ms_nonce', nonce);
-  sessionStorage.setItem('pgenfma_ms_destino', destino);
+  sessionStorage.setItem('saops_ms_nonce', nonce);
+  sessionStorage.setItem('saops_ms_destino', destino);
 
   const url = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?' +
     new URLSearchParams({
@@ -84,8 +84,8 @@ window.addEventListener('message', async (ev) => {
   const d = ev.data || {};
 
   if (d.tipo === 'ms_id_token') {
-    const nonce = sessionStorage.getItem('pgenfma_ms_nonce');
-    const destino = sessionStorage.getItem('pgenfma_ms_destino') || 'busca.html';
+    const nonce = sessionStorage.getItem('saops_ms_nonce');
+    const destino = sessionStorage.getItem('saops_ms_destino') || 'busca.html';
     const r = await entrarSocial('microsoft', d.token, nonce);
     aoEntrar(r, destino);
   } else if (d.tipo === 'ms_erro') {

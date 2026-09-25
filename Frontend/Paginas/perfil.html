@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PGENFMA - Meu perfil</title>
+  <title>SAOPS - Meu perfil</title>
   <link rel="stylesheet" href="../CSS/style.css">
   <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 </head>
 <body>
 
   <header>
-    <a class="brand" href="index.html"><img class="logo-header" src="../img/logo.svg" alt=""> PGENFMA</a>
+    <a class="brand" href="index.html"><img class="logo-header" src="../img/logo.svg" alt=""> SAOPS</a>
     <h1>Meu perfil</h1>
     <nav class="topnav">
       <a href="calendario.html">Calendário</a>
@@ -82,7 +82,7 @@
   }
 
   function pintarAvatar() {
-    const foto = localStorage.getItem('pgenfma_foto') || '';
+    const foto = localStorage.getItem('saops_foto') || '';
     const nome = nomeInput.value || localStorage.getItem('nome_cliente') || '';
     if (foto) {
       avatarGrande.style.backgroundImage = 'url(' + foto + ')';
@@ -123,7 +123,7 @@
         canvas.getContext('2d').drawImage(img, 0, 0, width, height);
         const base64 = canvas.toDataURL('image/jpeg', 0.82);
         try {
-          localStorage.setItem('pgenfma_foto', base64);
+          localStorage.setItem('saops_foto', base64);
           pintarAvatar();
           document.querySelectorAll('[data-avatar]').forEach((el) => {
             el.style.backgroundImage = 'url(' + base64 + ')';
@@ -141,7 +141,7 @@
   });
 
   document.getElementById('btn_remover_foto').onclick = () => {
-    localStorage.removeItem('pgenfma_foto');
+    localStorage.removeItem('saops_foto');
     pintarAvatar();
     document.querySelectorAll('[data-avatar]').forEach((el) => {
       el.style.backgroundImage = '';
@@ -158,7 +158,7 @@
     pintarAvatar();
     document.querySelectorAll('[data-avatar]').forEach((el) => {
       el.textContent = iniciais(nomeInput.value);
-      const foto = localStorage.getItem('pgenfma_foto');
+      const foto = localStorage.getItem('saops_foto');
       if (foto) { el.style.backgroundImage = 'url(' + foto + ')'; el.textContent = ''; }
     });
     toast('Perfil salvo neste navegador.', 'sucesso');
@@ -167,7 +167,7 @@
 
   document.getElementById('btn_sair_conta').onclick = async () => {
     await sairConta();
-    localStorage.removeItem('pgenfma_sessao');
+    localStorage.removeItem('saops_sessao');
     localStorage.removeItem('nome_cliente');
     localStorage.removeItem('email_cliente');
     localStorage.removeItem('telefone');

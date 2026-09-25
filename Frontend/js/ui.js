@@ -11,7 +11,7 @@
   });
 
   // Preenche os avatares (foto salva ou iniciais do nome)
-  const foto = localStorage.getItem('pgenfma_foto') || '';
+  const foto = localStorage.getItem('saops_foto') || '';
   const nome = localStorage.getItem('nome_cliente') || localStorage.getItem('email_cliente') || '';
   const iniciais = nome
     ? nome.trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join('')
@@ -46,13 +46,13 @@
         localStorage.setItem('email_cliente', d.usuario.email);
         mudou = true;
       }
-      if (d.usuario.foto && !localStorage.getItem('pgenfma_foto')) {
-        localStorage.setItem('pgenfma_foto', d.usuario.foto);
+      if (d.usuario.foto && !localStorage.getItem('saops_foto')) {
+        localStorage.setItem('saops_foto', d.usuario.foto);
         mudou = true;
       }
       if (!mudou) return;
 
-      const novaFoto = localStorage.getItem('pgenfma_foto') || '';
+      const novaFoto = localStorage.getItem('saops_foto') || '';
       const novoNome = localStorage.getItem('nome_cliente') || '';
       const ini = novoNome
         ? novoNome.trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join('').toUpperCase()

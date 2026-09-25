@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PGENFMA - Barbearia Vintage</title>
+  <title>SAOPS - Barbearia Vintage</title>
   <link rel="stylesheet" href="../CSS/style.css">
   <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 </head>
 <body>
 
   <header>
-    <a class="brand" href="index.html"><img class="logo-header" src="../img/logo.svg" alt=""> PGENFMA</a>
+    <a class="brand" href="index.html"><img class="logo-header" src="../img/logo.svg" alt=""> SAOPS</a>
     <a href="busca.html">&larr; Voltar</a>
     <h1 id="nome_prestador">Carregando...</h1>
     <nav class="topnav">
@@ -38,7 +38,7 @@
     document.getElementById('nome_prestador').textContent = 'Não encontrado';
     main.innerHTML = '<section><p>Prestador não encontrado. Volte à busca e escolha novamente.</p></section>';
   } else {
-    document.title = 'PGENFMA - ' + prestador.nome;
+    document.title = 'SAOPS - ' + prestador.nome;
     document.getElementById('nome_prestador').textContent = prestador.nome;
     main.innerHTML =
       '<section>' +

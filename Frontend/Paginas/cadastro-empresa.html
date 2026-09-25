@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PGENFMA - Cadastrar negócio</title>
+  <title>SAOPS - Cadastrar negócio</title>
   <link rel="stylesheet" href="../CSS/style.css">
   <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 </head>
 <body>
 
   <header>
-    <a class="brand" href="index.html"><img class="logo-header" src="../img/logo.svg" alt=""> PGENFMA</a>
+    <a class="brand" href="index.html"><img class="logo-header" src="../img/logo.svg" alt=""> SAOPS</a>
     <a href="login-empresa.html">&larr; Voltar</a>
     <h1>Cadastrar meu negócio</h1>
     <nav class="topnav">
@@ -92,7 +92,7 @@
       return;
     }
     // Dados do negócio (sem senha!) continuam locais
-    localStorage.setItem('pgenfma_empresa', JSON.stringify({ negocio, categoria, cnpj, endereco, email }));
+    localStorage.setItem('saops_empresa', JSON.stringify({ negocio, categoria, cnpj, endereco, email }));
     salvarSessaoLocal(r.usuario);
     toast('Negócio cadastrado!', 'sucesso');
     setTimeout(() => { window.location.href = 'agenda-prestador.html'; }, 400);
